@@ -1,3 +1,7 @@
+// bg-blue-950 border-blue-950
+// bg-zinc-900 border-zinc-900
+// bg-rose-950 border-rose-950
+
 "use client";
 
 import HandleComponent from "../../_components/HandleComponent";
@@ -52,7 +56,8 @@ const DesignConfigurator = ({
     onError: () => {
       toast({
         title: "Algo salió mal",
-        description: "Hubo un problema en tu acabado. Por favor intenta nuevamente.",
+        description:
+          "Hubo un problema en tu acabado. Por favor intenta nuevamente.",
         variant: "destructive",
       });
     },
@@ -227,7 +232,7 @@ const DesignConfigurator = ({
 
           <div className="px-8 pb-12 pt-8">
             <h2 className="tracking-tight font-bold text-3xl">
-              Personaliza tu carcaza
+              Personaliza tu carcasa
             </h2>
 
             <div className="w-full h-px bg-zinc-200 my-6" />
@@ -388,16 +393,21 @@ const DesignConfigurator = ({
             <div className="w-full flex gap-6 items-center">
               <p className="font-medium whitespace-nowrap">
                 {formatPrice(
-                  (BASE_PRICE + options.acabado.price + options.material.price) /
+                  (BASE_PRICE +
+                    options.acabado.price +
+                    options.material.price) /
                     100
                 )}
               </p>
               <Button
+                isLoading={isPending}
+                disabled={isPending}
+                loadingText="Guardando"
                 onClick={() =>
                   saveConfig({
                     configId,
                     color: options.color.value,
-                    finish: options.acabado.value,
+                    acabado: options.acabado.value,
                     material: options.material.value,
                     model: options.model.value,
                   })
@@ -405,7 +415,7 @@ const DesignConfigurator = ({
                 size="sm"
                 className="w-full"
               >
-                Continue
+                Continuar
                 <ArrowRight className="h-4 w-4 ml-1.5 inline" />
               </Button>
             </div>

@@ -25,7 +25,7 @@ export default function Home() {
               </h1>
               <p className="mt-8 text-large lg:pr-10 max-w-prose text-center lg:text-left text-balance md:text-wrap">
                 Captura tu imgn favotita{" "}
-                <span className="font-semibold">única</span> para tu carcaza de
+                <span className="font-semibold">única</span> para tu carcasa de
                 celular. CaseCobra protege no solo tus memorias, también tu
                 celular.
               </p>
@@ -139,7 +139,7 @@ export default function Home() {
               <div className="text-lg leading-8">
                 <p>
                   &quot;Me encantó la calidad de la impresión, la durabilidad y
-                  la resistencia de la carcaza. La he tenido por dos meses y
+                  la resistencia de la carcasa. La he tenido por dos meses y
                   medio y{" "}
                   <span className="p-0.5 bg-slate-800 text-white">
                     la imagen es súper nítida.
@@ -174,7 +174,7 @@ export default function Home() {
               <div className="text-lg leading-8">
                 <p>
                   &quot;Guardaba mi celular en el bolsillo junto con mis llaves
-                  y eso dejó varios rasguños en la carcaza. Además tenia un
+                  y eso dejó varios rasguños en la carcasa. Además tenia un
                   raspón muy evidente en la esquina,{" "}
                   <span className="p-0.5 bg-slate-800 text-white">
                     después de un año se ve como nueva.
@@ -212,7 +212,7 @@ export default function Home() {
                 Carga tu foto y obten
                 <span className="relative px-2 bg-green-600 text-white">
                   {" "}
-                  tu carcaza personalizada{" "}
+                  tu carcasa personalizada{" "}
                 </span>
                 hoy
               </h2>
@@ -261,7 +261,7 @@ export default function Home() {
                   className: "mx-auto mt-8"
                 })}
                 href="/configure/upload">
-                Crea tu carcaza ahora
+                Crea tu carcasa ahora
                 <ArrowRight className="h-4 w-4 ml-1.5" />
               </Link>
             </div>

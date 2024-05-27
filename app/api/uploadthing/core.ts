@@ -5,17 +5,14 @@ import { db } from "@/db";
 
 const f = createUploadthing();
 
-const auth = (req: Request) => ({ id: "fakeId" });
-
 export const ourFileRouter = {
-
   imageUploader: f({ image: { maxFileSize: "4MB" } })
-    .input(z.object({ configId: z.string().optional()}))
+    .input(z.object({ configId: z.string().optional() }))
     .middleware(async ({ input }) => {
-      return { input }
+      return { input };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      const {configId} = metadata.input;
+      const { configId } = metadata.input;
 
       const res = await fetch(file.url);
       const buffer = await res.arrayBuffer();
@@ -23,7 +20,7 @@ export const ourFileRouter = {
       const imgMetadata = await sharp(buffer).metadata();
       const { width, height } = imgMetadata;
 
-      if(!configId) {
+      if (!configId) {
         const configuration = await db.configuration.create({
           data: {
             imageUrl: file.url,
@@ -40,7 +37,7 @@ export const ourFileRouter = {
           },
           data: {
             croppedImageUrl: file.url,
-          }
+          },
         });
 
         return { configId: updatedConfiguration.id };

@@ -1,9 +1,9 @@
-import { cn } from "@/lib/utils"
-import { HTMLAttributes } from "react"
+import { cn } from "@/lib/utils";
+import { HTMLAttributes } from "react";
 
 interface PhoneProps extends HTMLAttributes<HTMLDivElement> {
-  imgSrc: string
-  dark?: boolean
+  imgSrc: string;
+  dark?: boolean;
 }
 
 const Phone = ({ imgSrc, className, dark = false, ...props }: PhoneProps) => {
@@ -18,7 +18,7 @@ const Phone = ({ imgSrc, className, dark = false, ...props }: PhoneProps) => {
       <img
         src={
           dark
-            ? "/phone-templete-dark-edges.png"
+            ? "/phone-template-dark-edges.png"
             : "/phone-template-white-edges.png"
         }
         className="pointer-events-none z-50 select-none"
@@ -34,6 +34,6 @@ const Phone = ({ imgSrc, className, dark = false, ...props }: PhoneProps) => {
       </div>
     </div>
   );
-}
+};
 
-export default Phone
+export default Phone;

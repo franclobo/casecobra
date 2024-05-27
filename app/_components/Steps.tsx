@@ -7,13 +7,13 @@ const STEPS = [
   {
     name: "Paso 1: Agregar imagen",
     description:
-      "Escoge la imagen que deseas imprimir en tu carcaza de celular.",
+      "Escoge la imagen que deseas imprimir en tu carcasa de celular.",
     url: "/upload",
   },
   {
     name: "Paso 2: Personaliza el diseño",
     description:
-      "Crea tu carcaza personalizada.",
+      "Crea tu carcasa personalizada.",
     url: "/design",
   },
   {
@@ -23,16 +23,18 @@ const STEPS = [
     url: "/preview",
   },
 ];
-function Steps() {
+const Steps = () => {
   const pathname = usePathname();
+
   return (
-    <ol className="rounded-md bg-white lg:flex lg:rounded-none lg:border-1 lg:border-r lg:border-gray-200">
+    <ol className="rounded-md bg-white lg:flex lg:rounded-none lg:border-l lg:border-r lg:border-gray-200">
       {STEPS.map((step, i) => {
-        const isCurrent = pathname.endsWith(step.url)
+        const isCurrent = pathname.endsWith(step.url);
         const isCompleted = STEPS.slice(i + 1).some((step) =>
           pathname.endsWith(step.url)
-        )
-        const imgPath = `/snake-${i + 1}.png`
+        );
+        const imgPath = `/snake-${i + 1}.png`;
+
         return (
           <li key={step.name} className="relative overflow-hidden lg:flex-1">
             <div>
@@ -46,16 +48,16 @@ function Steps() {
                 )}
                 aria-hidden="true"
               />
+
               <span
                 className={cn(
                   i !== 0 ? "lg:pl-9" : "",
                   "flex items-center px-6 py-4 text-sm font-medium"
                 )}
               >
-                <span className="flex-shrik-0">
+                <span className="flex-shrink-0">
                   <img
                     src={imgPath}
-                    alt=""
                     className={cn(
                       "flex h-20 w-20 object-contain items-center justify-center",
                       {
@@ -65,6 +67,7 @@ function Steps() {
                     )}
                   />
                 </span>
+
                 <span className="ml-4 h-full mt-0.5 flex min-w-0 flex-col justify-center">
                   <span
                     className={cn("text-sm font-semibold text-zinc-700", {
@@ -80,7 +83,7 @@ function Steps() {
                 </span>
               </span>
 
-              {/*separador*/}
+              {/* separator */}
               {i !== 0 ? (
                 <div className="absolute inset-0 hidden w-3 lg:block">
                   <svg
@@ -102,7 +105,7 @@ function Steps() {
         );
       })}
     </ol>
-  )
-}
+  );
+};
 
-export default Steps
+export default Steps;
