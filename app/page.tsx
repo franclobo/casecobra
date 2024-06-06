@@ -17,14 +17,14 @@ export default function Home() {
                 <img src="/snake-1.png" className="w-full" alt="Snake" />
               </div>
               <h1 className="relative w-fit tracking-tight text-balance mt-16 font-bold !leading-tight text-gray-900 text-5xl md:text-6xl lg:text-7xl">
-                La imgen que{" "}
+                La imagen que{" "}
                 <span className="bg-green-600 px-2 text-white">
                   personaliza
                 </span>{" "}
                 tu teléfono
               </h1>
               <p className="mt-8 text-large lg:pr-10 max-w-prose text-center lg:text-left text-balance md:text-wrap">
-                Captura tu imgn favotita{" "}
+                Captura tu imagen favorita{" "}
                 <span className="font-semibold">única</span> para tu carcasa de
                 celular. CaseCobra protege no solo tus memorias, también tu
                 celular.
@@ -142,9 +142,9 @@ export default function Home() {
                   la resistencia de la carcasa. La he tenido por dos meses y
                   medio y{" "}
                   <span className="p-0.5 bg-slate-800 text-white">
-                    la imagen es súper nítida.
+                    la imagen es súper nítida.{" "}
                   </span>
-                  La imagen que tenía antes empezó a amarillentarse a las pocas
+                  La imagen que tenía antes empezó a amarillarse a las pocas
                   semanas&quot;
                 </p>
               </div>
@@ -174,10 +174,10 @@ export default function Home() {
               <div className="text-lg leading-8">
                 <p>
                   &quot;Guardaba mi celular en el bolsillo junto con mis llaves
-                  y eso dejó varios rasguños en la carcasa. Además tenia un
+                  y eso dejó varios rasguños en la carcasa. Además tenía un
                   raspón muy evidente en la esquina,{" "}
                   <span className="p-0.5 bg-slate-800 text-white">
-                    después de un año se ve como nueva.
+                    después de un año se ve como nueva.{" "}
                   </span>
                   Me agrada&quot;
                 </p>
@@ -209,7 +209,7 @@ export default function Home() {
           <div className="mb-12 px-6 lg:px-8">
             <div className="mx-auto max-w-2xl sm:text-center">
               <h2 className="order-1 mt-2 tracking-tight text-center text-balance !leading-tight font-bold text-5xl md:text-6xl text-gray-900">
-                Carga tu foto y obten
+                Carga tu foto y obtén
                 <span className="relative px-2 bg-green-600 text-white">
                   {" "}
                   tu carcasa personalizada{" "}
@@ -251,16 +251,17 @@ export default function Home() {
             </li>
             <li className="w-fit">
               <Check className="h-5 w-5 shrink-0 text-green-600 inline mr-1.5" />
-              Garantia de impresión de 5 años
+              Garantía de impresión de 5 años
             </li>
 
             <div className="flex justify-center">
               <Link
                 className={buttonVariants({
                   size: "lg",
-                  className: "mx-auto mt-8"
+                  className: "mx-auto mt-8",
                 })}
-                href="/configure/upload">
+                href="/configure/upload"
+              >
                 Crea tu carcasa ahora
                 <ArrowRight className="h-4 w-4 ml-1.5" />
               </Link>

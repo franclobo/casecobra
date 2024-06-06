@@ -1,64 +1,43 @@
-"use client"
-import { useState, useEffect, use } from "react"
-import { Configuration } from "@prisma/client"
-import Confetti from "react-dom-confetti"
+"use client";
+
+import { useState, useEffect } from "react";
+import { Configuration } from "@prisma/client";
+import Confetti from "react-dom-confetti";
 import Phone from "@/app/_components/Phone";
-import { COLORS, FINISHES, MODELS } from "@/validators/option-validator";
+import { COLORS, MODELS } from "@/validators/option-validator";
 import { cn, formatPrice } from "@/lib/utils";
-import { ArrowRight, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import { BASE_PRICE, PRODUCT_PRICES } from "@/config/products";
-import { Button } from "@/components/ui/button";
-import { useMutation } from "@tanstack/react-query";
-import { createCheckoutSession } from "./actions";
-import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
-import {useKindeBrowserClient} from "@kinde-oss/kinde-auth-nextjs"
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import LoginModal from "@/app/_components/LoginModal";
+import { useRouter } from "next/navigation";
+
 
 function DesignPreview({ configuration }: { configuration: Configuration }) {
-  const router = useRouter()
-  const {toast} = useToast()
-  const {id} = configuration
-  const {user} = useKindeBrowserClient()
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false)
-
+  const router = useRouter();
+  const { toast } = useToast();
+  const { id } = configuration;
+  const { user } = useKindeBrowserClient();
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
-  useEffect(() => setShowConfetti(true), []);
-  const { color, model, acabado, material } = configuration
-  const tw = COLORS.find((supportedColor) => supportedColor.value === color)?.tw
-  const { label: modelLabel } = MODELS.options.find(({ value }) => value === model)!
-  let totalPrice = BASE_PRICE
-  if (acabado === "texturizado")
-    totalPrice += PRODUCT_PRICES.acabado.texturizado
-  if (material === "policarbonato")
-    totalPrice += PRODUCT_PRICES.material.policarbonato
-  const { mutate: createPaymentSession, isPending } = useMutation({
-    mutationKey: ["get-checkout-session"],
-    mutationFn: createCheckoutSession,
-    onSuccess: ({url}) => {
-      if(url)
-        router.push(url)
-      else
-        throw new Error("No se pudo crear la sesión de pago")
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive"
-      })
-    }
-  })
 
-  const handleCheckout = () => {
-    if(user){
-      createPaymentSession({configId: id})
-    } else {
-      localStorage.setItem("configurationId", id)
-      setIsLoginModalOpen(true)
-    }
-  }
+  useEffect(() => setShowConfetti(true), []);
+
+  const { color, model, acabado, material } = configuration;
+  const tw = COLORS.find(
+    (supportedColor) => supportedColor.value === color
+  )?.tw;
+  const { label: modelLabel } = MODELS.options.find(
+    ({ value }) => value === model
+  )!;
+
+  let totalPrice = BASE_PRICE;
+  if (acabado === "texturizado")
+    totalPrice += PRODUCT_PRICES.acabado.texturizado;
+  if (material === "policarbonato")
+    totalPrice += PRODUCT_PRICES.material.policarbonato;
 
   return (
     <>
@@ -71,7 +50,7 @@ function DesignPreview({ configuration }: { configuration: Configuration }) {
           config={{ elementCount: 200, spread: 90 }}
         />
       </div>
-      <div className="mt-20 grid grid-cols-1 text-sm sm:grid-cols-12 sm:grid-rows-1 sm:gap-x-6 md:gap-x-8 lg:gap-x-12">
+      <div className="mt-20 grid grid-cols-1 text-sm sm:grid-cols-12 sm:gap-x-6 md:gap-x-8 lg:gap-x-12">
         <div className="sm:col-span-4 md:col-span-3 md:row-span-2 md:row-end-2">
           <Phone
             className={cn(`bg-${tw}`)}
@@ -115,21 +94,21 @@ function DesignPreview({ configuration }: { configuration: Configuration }) {
             <div className="bg-gray-50 p-6 sm:rounded-lg sm:p-8">
               <div className="flow-root text-sm">
                 <div className="flex items-center justify-between py-1 mt-2">
-                  <p className="text-.gray-600">Subtotal</p>
+                  <p className="text-gray-600">Subtotal</p>
                   <p className="font-medium text-gray-900">
                     {formatPrice(BASE_PRICE / 100)}
                   </p>
                 </div>
 
-                {acabado === "texturizado" ? (
+                {acabado === "texturizado" && (
                   <div className="flex items-center justify-between py-1 mt-2">
                     <p className="text-gray-600">Texturizado</p>
                     <p className="font-medium text-gray-900">
                       +{formatPrice(PRODUCT_PRICES.acabado.texturizado / 100)}
                     </p>
                   </div>
-                ) : null}
-                {material === "policarbonato" ? (
+                )}
+                {material === "policarbonato" && (
                   <div className="flex items-center justify-between py-1 mt-2">
                     <p className="text-gray-600">Policarbonato blando</p>
                     <p className="font-medium text-gray-900">
@@ -137,7 +116,7 @@ function DesignPreview({ configuration }: { configuration: Configuration }) {
                       {formatPrice(PRODUCT_PRICES.material.policarbonato / 100)}
                     </p>
                   </div>
-                ) : null}
+                )}
                 <div className="my-2 h-px bg-gray-200" />
                 <div className="flex items-center justify-between py-2">
                   <p className="text-semibold text-gray-900">Total</p>
@@ -151,19 +130,41 @@ function DesignPreview({ configuration }: { configuration: Configuration }) {
             <div className="mt-8 flex justify-end pb-12">
               <PayPalScriptProvider
                 options={{
-                  clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ?? "",
+                  clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!,
                 }}
               >
-                <Button
-                  onClick={() => handleCheckout()}
-                  disabled={isPending}
-                  isLoading={isPending}
-                  loadingText="Verificando"
-                  className="px-4 sm:px-6 lg:px-8"
-                >
-                  Verificar
-                  <ArrowRight className="w-4 h-4 ml-1.5" />
-                </Button>
+                <PayPalButtons
+                  style={{
+                    layout: "horizontal",
+                    color: "blue",
+                  }}
+                  createOrder={async () => {
+
+                    const res = await fetch("/api/checkout", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({ configId: configuration }),
+                    })
+                    localStorage.setItem("configurationId", id);
+                    console.log("Configuration ID:", configuration);
+                    const order = await res.json()
+                    console.log("Order Created:", order);
+                    return order.id
+                  }}
+                  onApprove={async (data, actions) => {
+                    console.log("Order Approved:", data);
+                    actions.order?.capture()
+                  }}
+                  onCancel={() => {
+                    toast({
+                      title: "Cancelled",
+                      description: "The transaction was cancelled.",
+                      variant: "destructive",
+                    });
+                  }}
+                />
               </PayPalScriptProvider>
             </div>
           </div>
@@ -173,4 +174,4 @@ function DesignPreview({ configuration }: { configuration: Configuration }) {
   );
 }
 
-export default DesignPreview
+export default DesignPreview;
