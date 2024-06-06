@@ -1,19 +1,13 @@
 import { db } from "@/db";
 import { headers } from "next/headers";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import paypal from "@paypal/checkout-server-sdk";
+import client from "../../utils/paypal";
 
-
-const clientID = process.env.PAYPAL_CLIENT_ID || "";
-const clientSecret = process.env.PAYPAL_CLIENT_SECRET || "";
-
-const environment = new paypal.core.SandboxEnvironment(clientID, clientSecret);
-const client = new paypal.core.PayPalHttpClient(environment);
-
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const body = await req.text();
-    const signature = headers().get("paypal-auth-algo"); // Adjust if needed
+    const signature = headers().get("paypal-auth-algo");
 
     if (!signature) {
       return new Response("Invalid signature", { status: 400 });

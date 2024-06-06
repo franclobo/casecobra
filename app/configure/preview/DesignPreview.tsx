@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Configuration } from "@prisma/client";
+import { createCheckoutSession } from "./actions";
 import Confetti from "react-dom-confetti";
 import Phone from "@/app/_components/Phone";
 import { COLORS, MODELS } from "@/validators/option-validator";
@@ -9,23 +10,23 @@ import { cn, formatPrice } from "@/lib/utils";
 import { Check } from "lucide-react";
 import { BASE_PRICE, PRODUCT_PRICES } from "@/config/products";
 import { useToast } from "@/components/ui/use-toast";
-import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import LoginModal from "@/app/_components/LoginModal";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import { create } from "domain";
 
 
-function DesignPreview({ configuration }: { configuration: Configuration }) {
+const  DesignPreview = ({ configuration }: { configuration: Configuration }) => {
   const router = useRouter();
   const { toast } = useToast();
-  const { id } = configuration;
-  const { user } = useKindeBrowserClient();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
 
   useEffect(() => setShowConfetti(true), []);
 
   const { color, model, acabado, material } = configuration;
+
   const tw = COLORS.find(
     (supportedColor) => supportedColor.value === color
   )?.tw;
@@ -38,6 +39,85 @@ function DesignPreview({ configuration }: { configuration: Configuration }) {
     totalPrice += PRODUCT_PRICES.acabado.texturizado;
   if (material === "policarbonato")
     totalPrice += PRODUCT_PRICES.material.policarbonato;
+
+  const paypalCreateOrder = async () => {
+    try {
+      const response = await axios.post("/api/paypal/createorder", {
+        configId: configuration,
+      });
+
+      if (response.status !== 200) {
+        throw new Error(
+          response.data.error || "Error al crear la orden en PayPal"
+        );
+      }
+
+      console.log("Order ID:", response.data.orderId);
+      return response.data.orderId;
+    } catch (err) {
+      console.error("Error al crear la orden:", err);
+      toast({
+        title: "Error",
+        description: "Hubo un error al crear la orden.",
+        variant: "destructive",
+      });
+      return null;
+    }
+  };
+
+  const handleCheckOut = async () => {
+    try {
+      const response = await createCheckoutSession({
+        configId: configuration.id,
+      });
+      console.log("ORDER: ", response?.order);
+      if (response) {
+        const orderId = response.order?.id;
+        router.push(`/thankyou?orderId=${orderId}`);
+      }
+    } catch (err) {
+      console.error("Error al crear la orden:", err);
+      toast({
+        title: "Error",
+        description: "Hubo un error al crear la orden.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const paypalCaptureOrder = async (orderId: string) => {
+    try {
+      const response = await axios.post("/api/paypal/captureorder", {
+        orderId,
+      });
+
+      if (response.status !== 200) {
+        throw new Error(
+          response.data.error || "Error al capturar la orden en PayPal"
+        );
+      }
+
+      console.log("Order captured:", response.data);
+      return response.data;
+    } catch (err) {
+      console.error("Error al capturar la orden:", err);
+      toast({
+        title: "Error",
+        description: "Hubo un error al capturar la orden.",
+        variant: "destructive",
+      });
+      return null;
+    }
+  };
+
+  const paypalCancelOrder = () => {
+    toast({
+      title: "Cancelled",
+      description: "The transaction was cancelled.",
+      variant: "destructive",
+    });
+    router.push(`/configure/preview?id=${configuration.id}`);
+  }
 
   return (
     <>
@@ -138,32 +218,17 @@ function DesignPreview({ configuration }: { configuration: Configuration }) {
                     layout: "horizontal",
                     color: "blue",
                   }}
-                  createOrder={async () => {
-
-                    const res = await fetch("/api/checkout", {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/json",
-                      },
-                      body: JSON.stringify({ configId: configuration }),
-                    })
-                    localStorage.setItem("configurationId", id);
-                    console.log("Configuration ID:", configuration);
-                    const order = await res.json()
-                    console.log("Order Created:", order);
-                    return order.id
-                  }}
+                  createOrder={paypalCreateOrder}
                   onApprove={async (data, actions) => {
-                    console.log("Order Approved:", data);
-                    actions.order?.capture()
-                  }}
-                  onCancel={() => {
-                    toast({
-                      title: "Cancelled",
-                      description: "The transaction was cancelled.",
-                      variant: "destructive",
+                    let response = await paypalCaptureOrder(data.orderID);
+                    const orderID = response.result.id;
+                    console.log("Order Approved:", orderID);
+                    actions.order?.capture().then((details) => {
+                      console.log("Order captured:", details);
+                      handleCheckOut();
                     });
                   }}
+                  onCancel={paypalCancelOrder}
                 />
               </PayPalScriptProvider>
             </div>

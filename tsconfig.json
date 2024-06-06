@@ -21,6 +21,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/api/paypal/createorder.ts", "app/api/paypal/captureorder.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/api/paypal/createorder/route.ts", "app/api/paypal/captureorder/route.ts"],
   "exclude": ["node_modules"]
 }
