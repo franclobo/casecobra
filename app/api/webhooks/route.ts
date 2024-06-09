@@ -1,5 +1,4 @@
 import { db } from "@/db";
-import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import crypto from "crypto";
@@ -28,12 +27,23 @@ async function verifyPayPalWebhookSignature(
 export async function POST(req: NextRequest) {
   try {
     const body = await req.text();
-    const transmissionId = headers().get("paypal-transmission-id");
-    const transmissionTime = headers().get("paypal-transmission-time");
-    const certUrl = headers().get("paypal-cert-url");
-    const transmissionSig = headers().get("paypal-transmission-sig");
+    const headers = req.headers;
+
+    const transmissionId = headers.get("paypal-transmission-id");
+    const transmissionTime = headers.get("paypal-transmission-time");
+    const certUrl = headers.get("paypal-cert-url");
+    const transmissionSig = headers.get("paypal-transmission-sig");
+
+    // Registro para depuración
+    console.log("Received headers:", {
+      transmissionId,
+      transmissionTime,
+      certUrl,
+      transmissionSig,
+    });
 
     if (!transmissionId || !transmissionTime || !certUrl || !transmissionSig) {
+      console.error("Invalid signature headers");
       return new Response("Invalid signature headers", { status: 400 });
     }
 
@@ -45,11 +55,16 @@ export async function POST(req: NextRequest) {
       transmissionSig,
       certUrl
     );
+
     if (!signatureVerified) {
+      console.error("Invalid PayPal webhook signature");
       return new Response("Invalid PayPal webhook signature", { status: 400 });
     }
 
     const webhookEvent = JSON.parse(body);
+
+    // Registro para depuración
+    console.log("Webhook event received:", webhookEvent);
 
     if (webhookEvent.event_type === "PAYMENT.CAPTURE.COMPLETED") {
       const orderID = webhookEvent.resource.id;
@@ -60,10 +75,9 @@ export async function POST(req: NextRequest) {
         throw new Error("Missing user email");
       }
 
-      const { userId, orderId } = purchaseUnits.custom_id || {
-        userId: null,
-        orderId: null,
-      };
+      const { userId, orderId } = purchaseUnits.custom_id
+        ? JSON.parse(purchaseUnits.custom_id)
+        : { userId: null, orderId: null };
 
       if (!userId || !orderId) {
         throw new Error("Invalid request metadata");
