@@ -15,7 +15,10 @@ export const ourFileRouter = {
       const { configId } = metadata.input;
 
       const res = await fetch(file.url);
-      const buffer = await res.arrayBuffer();
+      const arrayBuffer = await res.arrayBuffer();
+
+      // Convert ArrayBuffer to Buffer
+      const buffer = Buffer.from(arrayBuffer);
 
       const imgMetadata = await sharp(buffer).metadata();
       const { width, height } = imgMetadata;
