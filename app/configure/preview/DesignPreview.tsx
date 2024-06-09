@@ -207,7 +207,7 @@ const  DesignPreview = ({ configuration }: { configuration: Configuration }) => 
                       console.log("Order captured:", details);
                     });
                     const body = {
-                      url: `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/webhooks`,
+                      url: `${process.env.NEXT_PUBLIC_VERCEL_URL}`,
                       event_types: [
                         {
                           name: "PAYMENT.CAPTURE.COMPLETED",
