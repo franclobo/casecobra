@@ -206,8 +206,7 @@ const  DesignPreview = ({ configuration }: { configuration: Configuration }) => 
                     actions.order?.capture().then((details) => {
                       console.log("Order captured:", details);
                     });
-                    const webhookID = process.env.PAYPAL_WEBHOOK_ID;
-                    await axios.post("/api/webhooks", { webhookID });
+                    await axios.post("/api/webhooks", { orderID });
                     if (response) {
                       const orderId = response.id;
                       router.push(`/thankyou?orderId=${orderId}`);
