@@ -1,10 +1,29 @@
 import { db } from "@/db";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import paypal from "@paypal/checkout-server-sdk";
-import client from "../../utils/paypal";
 import axios from "axios";
 import crypto from "crypto";
+
+// Función para verificar la firma del webhook de PayPal
+async function verifyPayPalWebhookSignature(
+  body: string,
+  transmissionId: string,
+  transmissionTime: string,
+  transmissionSig: string,
+  certUrl: string
+): Promise<boolean> {
+  // Fetch PayPal's public certificate
+  const response = await axios.get(certUrl);
+  const cert = response.data;
+
+  // Create the expected signature
+  const expectedSignature = crypto
+    .createVerify("sha256")
+    .update(transmissionId + "|" + transmissionTime + "|" + body)
+    .verify(cert, transmissionSig, "base64");
+
+  return expectedSignature;
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,35 +32,21 @@ export async function POST(req: NextRequest) {
     const transmissionTime = headers().get("paypal-transmission-time");
     const certUrl = headers().get("paypal-cert-url");
     const transmissionSig = headers().get("paypal-transmission-sig");
-    const webhookId = process.env.PAYPAL_WEBHOOK_ID;
 
-    if (
-      !transmissionId ||
-      !transmissionTime ||
-      !certUrl ||
-      !transmissionSig ||
-      !webhookId
-    ) {
-      return new Response(
-        "Invalid signature headers or missing webhook configuration",
-        { status: 400 }
-      );
+    if (!transmissionId || !transmissionTime || !certUrl || !transmissionSig) {
+      return new Response("Invalid signature headers", { status: 400 });
     }
 
-    // Fetch PayPal's public certificate
-    const response = await axios.get(certUrl);
-    const cert = response.data;
-
-    // Create the expected signature
-    const expectedSignature = crypto
-      .createVerify("sha256")
-      .update(
-        transmissionId + "|" + transmissionTime + "|" + webhookId + "|" + body
-      )
-      .verify(cert, transmissionSig, "base64");
-
-    if (!expectedSignature) {
-      return new Response("Invalid webhook signature", { status: 400 });
+    // Verificar la firma del webhook de PayPal
+    const signatureVerified = await verifyPayPalWebhookSignature(
+      body,
+      transmissionId,
+      transmissionTime,
+      transmissionSig,
+      certUrl
+    );
+    if (!signatureVerified) {
+      return new Response("Invalid PayPal webhook signature", { status: 400 });
     }
 
     const webhookEvent = JSON.parse(body);
@@ -85,10 +90,7 @@ export async function POST(req: NextRequest) {
           },
           billingAddress: {
             create: {
-              name:
-                webhookEvent.resource.payer.name.given_name +
-                " " +
-                webhookEvent.resource.payer.name.surname,
+              name: purchaseUnits.billing_address.name.full_name,
               city: billingAddress.admin_area_2,
               country: billingAddress.country_code,
               postalCode: billingAddress.postal_code,
@@ -99,14 +101,18 @@ export async function POST(req: NextRequest) {
         },
       });
 
+      // Envía un correo electrónico al cliente
+      // Aquí debes implementar tu lógica para enviar un correo electrónico al cliente sobre el pedido completado
+
       return NextResponse.json({ result: updatedOrder, ok: true });
     }
 
     return NextResponse.json({ result: webhookEvent, ok: true });
   } catch (err) {
     console.error(err);
+
     return NextResponse.json(
-      { message: "Algo salió mal", ok: false },
+      { message: "Something went wrong", ok: false },
       { status: 500 }
     );
   }

@@ -18,12 +18,14 @@ const ThankYou = () => {
     retryDelay: 500,
   });
 
+  console.log(data);
+
   if (data === undefined) {
     return (
       <div className="w-full mt-24 flex justify-center">
         <div className="flex flex-col items-center gap-2">
           <Loader2 className="h-8 w-8 animate-spin text-zinc-500" />
-          <h3 className="font-semibold text-xl">Loading your order...</h3>
+          <h3 className="font-semibold text-xl">Cargando tu orden...</h3>
           <p>No tomará mucho tiempo.</p>
         </div>
       </div>
@@ -35,8 +37,8 @@ const ThankYou = () => {
       <div className="w-full mt-24 flex justify-center">
         <div className="flex flex-col items-center gap-2">
           <Loader2 className="h-8 w-8 animate-spin text-zinc-500" />
-          <h3 className="font-semibold text-xl">Verifying your payment...</h3>
-          <p>This might take a moment.</p>
+          <h3 className="font-semibold text-xl">Verificando tu pago...</h3>
+          <p>Esto tomará un momento.</p>
         </div>
       </div>
     );
