@@ -2,7 +2,6 @@
 
 import { db } from "@/db";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import axios from "axios";
 
 export const getPaymentStatus = async ({ orderId }: { orderId: string }) => {
 const { getUser } = getKindeServerSession();
@@ -38,7 +37,7 @@ export const invokeWebhookAndGetPaymentStatus = async ({
 }: {
   orderId: string;
 }) => {
-  
+
   const paymentStatus = await getPaymentStatus({ orderId });
 
   return paymentStatus;

@@ -65,26 +65,6 @@ const  DesignPreview = ({ configuration }: { configuration: Configuration }) => 
     }
   };
 
-  const handleCheckOut = async () => {
-    try {
-      const response = await createCheckoutSession({
-        configId: configuration.id,
-      });
-      console.log("ORDER: ", response?.order);
-      if (response) {
-        const orderId = response.order?.id;
-        router.push(`/thankyou?orderId=${orderId}`);
-      }
-    } catch (err) {
-      console.error("Error al crear la orden:", err);
-      toast({
-        title: "Error",
-        description: "Hubo un error al crear la orden.",
-        variant: "destructive",
-      });
-    }
-  };
-
   const paypalCaptureOrder = async (orderId: string) => {
     try {
       const response = await axios.post("/api/paypal/captureorder", {
@@ -225,10 +205,13 @@ const  DesignPreview = ({ configuration }: { configuration: Configuration }) => 
                     console.log("Order Approved:", orderID);
                     actions.order?.capture().then((details) => {
                       console.log("Order captured:", details);
-                      handleCheckOut();
                     });
                     const webhookID = process.env.PAYPAL_WEBHOOK_ID;
                     await axios.post("/api/webhooks", { webhookID });
+                    if (response) {
+                      const orderId = response.id;
+                      router.push(`/thankyou?orderId=${orderId}`);
+                    }
                   }}
                   onCancel={paypalCancelOrder}
                 />
