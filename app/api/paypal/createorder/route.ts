@@ -71,7 +71,7 @@ export const POST = async (
     }
 
     const formattedPrice = (price / 100).toFixed(2);
-
+    console.log(order);
     const paypalRequest = new paypal.orders.OrdersCreateRequest();
     paypalRequest.prefer("return=representation");
     paypalRequest.requestBody({
@@ -128,6 +128,7 @@ export const POST = async (
     });
 
     const response = await client.execute(paypalRequest);
+    console.log(response.result);
     return (
       NextResponse.json(
         {
