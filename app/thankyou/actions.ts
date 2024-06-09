@@ -39,7 +39,7 @@ export const invokeWebhookAndGetPaymentStatus = async ({
   orderId: string;
 }) => {
   // Invocar el webhook
-  await axios.post("/api/webhook", { orderId });
+  await axios.post("/api/webhooks", { orderId });
 
   // Obtener el estado del pago después de invocar el webhook
   const paymentStatus = await getPaymentStatus({ orderId });
