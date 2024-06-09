@@ -38,11 +38,7 @@ export const invokeWebhookAndGetPaymentStatus = async ({
 }: {
   orderId: string;
 }) => {
-  // Invocar el webhook
-  const webhookID = process.env.PAYPAL_WEBHOOK_ID;
-  await axios.post("/api/webhooks", { webhookID });
-
-  // Obtener el estado del pago después de invocar el webhook
+  
   const paymentStatus = await getPaymentStatus({ orderId });
 
   return paymentStatus;

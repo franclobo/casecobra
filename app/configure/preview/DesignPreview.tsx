@@ -227,6 +227,8 @@ const  DesignPreview = ({ configuration }: { configuration: Configuration }) => 
                       console.log("Order captured:", details);
                       handleCheckOut();
                     });
+                    const webhookID = process.env.PAYPAL_WEBHOOK_ID;
+                    await axios.post("/api/webhooks", { webhookID });
                   }}
                   onCancel={paypalCancelOrder}
                 />
