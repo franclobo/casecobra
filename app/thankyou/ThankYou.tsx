@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { getPaymentStatus } from "./actions";
+import { invokeWebhookAndGetPaymentStatus } from "./actions";
 import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import PhonePreview from "../_components/PhonePreview";
@@ -13,7 +13,7 @@ const ThankYou = () => {
 
   const { data } = useQuery({
     queryKey: ["get-payment-status"],
-    queryFn: async () => await getPaymentStatus({ orderId }),
+    queryFn: async () => await invokeWebhookAndGetPaymentStatus({ orderId }),
     retry: true,
     retryDelay: 500,
   });
