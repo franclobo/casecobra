@@ -70,7 +70,7 @@ export const POST = async (
       });
     }
 
-    const formattedPrice = "1.00";
+    const formattedPrice = (price / 100).toFixed(2);
     console.log(order);
     const paypalRequest = new paypal.orders.OrdersCreateRequest();
     paypalRequest.prefer("return=representation");

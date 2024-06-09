@@ -10,7 +10,7 @@ const configureEnvironment = (): paypal.core.PayPalHttpClient => {
 
   const environment =
     process.env.NODE_ENV === "production"
-      ? new paypal.core.LiveEnvironment(clientId, clientSecret)
+      ? new paypal.core.SandboxEnvironment(clientId, clientSecret)
       : new paypal.core.SandboxEnvironment(clientId, clientSecret);
 
   return new paypal.core.PayPalHttpClient(environment);
