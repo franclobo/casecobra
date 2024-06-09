@@ -206,7 +206,15 @@ const  DesignPreview = ({ configuration }: { configuration: Configuration }) => 
                     actions.order?.capture().then((details) => {
                       console.log("Order captured:", details);
                     });
-                    await axios.post("/api/webhooks", { orderID });
+                    const body = {
+                      url: `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/webhooks`,
+                      event_types: [
+                        {
+                          name: "PAYMENT.CAPTURE.COMPLETED",
+                        },
+                      ],
+                    };
+                    await axios.post("/api/webhooks", { body });
                     if (response) {
                       const orderId = response.id;
                       router.push(`/thankyou?orderId=${orderId}`);
