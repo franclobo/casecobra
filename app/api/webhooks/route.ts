@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
 
     const webhookEvent = JSON.parse(body);
 
-    if (webhookEvent.event_type === "PAYMENT.SALE.COMPLETED") {
+    if (webhookEvent.event_type === "PAYMENT.CAPTURE.COMPLETED") {
       const orderID = webhookEvent.resource.id;
       const payerEmail = webhookEvent.resource.payer.email_address;
       const purchaseUnits = webhookEvent.resource.purchase_units[0];
