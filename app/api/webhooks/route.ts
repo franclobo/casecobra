@@ -4,7 +4,6 @@ import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import crypto from "crypto";
 import crc32 from "crc-32";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 // Función para verificar la firma del webhook de PayPal
 // Función para descargar y cachear el certificado de PayPal
@@ -20,10 +19,11 @@ async function verifyPayPalWebhookSignature(
   event: string,
   headers: { [key: string]: string },
 ): Promise<boolean> {
-
+  
   const transmissionId = headers["paypal-transmission-id"];
   const timeStamp = headers["paypal-transmission-time"];
-  const crc = parseInt("0x" + crc32.str(event).toString(16), 16); // hex crc32 of raw event data, parsed to decimal form
+  const crcHex = crc32.str(event).toString(16).padStart(8, "0"); // hex crc32 of raw event data, ensure it's 8 characters long
+  const crc = parseInt(crcHex, 16); // parse hex string to decimal// hex crc32 of raw event data, parsed to decimal form
 
   const message = `${transmissionId}|${timeStamp}|${WEBHOOK_ID}|${crc}`;
   console.log(`Original signed message: ${message}`);
@@ -31,7 +31,10 @@ async function verifyPayPalWebhookSignature(
   const certPem = await downloadAndCache(headers["paypal-cert-url"]);
 
   // Create buffer from base64-encoded signature
-  const signatureBuffer = Buffer.from(headers["paypal-transmission-sig"], "base64");
+  const signatureBuffer = Buffer.from(
+    headers["paypal-transmission-sig"],
+    "base64"
+  );
 
   // Create a verification object
   const verifier = crypto.createVerify("SHA256");
