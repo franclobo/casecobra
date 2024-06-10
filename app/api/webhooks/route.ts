@@ -13,16 +13,27 @@ async function verifyPayPalWebhookSignature(
   certUrl: string
 ): Promise<boolean> {
   try {
+    // Registro para depuración
+    console.log("Verifying PayPal webhook signature...", {
+      body,
+      transmissionId,
+      transmissionTime,
+      transmissionSig,
+      certUrl,
+    });
     // Fetch PayPal's public certificate
     const response = await axios.get(certUrl);
     const cert = response.data;
     console.log("PayPal certificate:", cert);
 
+    const data = transmissionId + "|" + transmissionTime + "|" + body;
+    console.log("Datos concatenados para la firma:", data);
+
     // Create the expected signature
     const verifier = crypto.createVerify("sha256");
-    verifier.update(transmissionId + "|" + transmissionTime + "|" + body);
+    verifier.update(data);
     const expectedSignature = verifier.verify(cert, transmissionSig, "base64");
-    console.log("Expected signature:", expectedSignature);
+    console.log("Firma esperada:", expectedSignature);
 
     return expectedSignature;
   } catch (error) {
