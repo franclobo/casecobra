@@ -52,14 +52,14 @@ const ThankYou = () => {
         <div className="max-w-xl">
           <p className="text-base font-medium text-primary">Thank you!</p>
           <h1 className="mt-2 text-4xl font-bold tracking-tight sm:text-5xl">
-            Your case is on the way!
+            ¡Tu carcasa está en camino!
           </h1>
           <p className="mt-2 text-base text-zinc-500">
             Acabamos de recibir tu orden y la estamos procesando.
           </p>
 
           <div className="mt-12 text-sm font-medium">
-            <p className="text-zinc-900">Order number</p>
+            <p className="text-zinc-900">Número de orden</p>
             <p className="mt-2 text-zinc-500">{orderId}</p>
           </div>
         </div>
@@ -67,7 +67,7 @@ const ThankYou = () => {
         <div className="mt-10 border-t border-zinc-200">
           <div className="mt-10 flex flex-auto flex-col">
             <h4 className="font-semibold text-zinc-900">
-              You made a great choice!
+              ¡Hiciste una gran elección!
             </h4>
             <p className="mt-2 text-sm text-zinc-600">
               Creemos que una carcasa no solo debe verse bien, sino también
@@ -88,7 +88,7 @@ const ThankYou = () => {
         <div>
           <div className="grid grid-cols-2 gap-x-6 py-10 text-sm">
             <div>
-              <p className="font-medium text-gray-900">Shipping address</p>
+              <p className="font-medium text-gray-900">Dirección de envío</p>
               <div className="mt-2 text-zinc-700">
                 <address className="not-italic">
                   <span className="block">{shippingAddress?.name}</span>
@@ -100,7 +100,7 @@ const ThankYou = () => {
               </div>
             </div>
             <div>
-              <p className="font-medium text-gray-900">Billing address</p>
+              <p className="font-medium text-gray-900">Dirección de facturación</p>
               <div className="mt-2 text-zinc-700">
                 <address className="not-italic">
                   <span className="block">{billingAddress?.name}</span>
@@ -115,12 +115,12 @@ const ThankYou = () => {
 
           <div className="grid grid-cols-2 gap-x-6 border-t border-zinc-200 py-10 text-sm">
             <div>
-              <p className="font-medium text-zinc-900">Payment status</p>
-              <p className="mt-2 text-zinc-700">Paid</p>
+              <p className="font-medium text-zinc-900">Estado de pago</p>
+              <p className="mt-2 text-zinc-700">Pagado</p>
             </div>
 
             <div>
-              <p className="font-medium text-zinc-900">Shipping Method</p>
+              <p className="font-medium text-zinc-900">Método de envío</p>
               <p className="mt-2 text-zinc-700">
                 DHL, takes up to 3 working days
               </p>
@@ -134,7 +134,7 @@ const ThankYou = () => {
             <p className="text-zinc-700">{formatPrice(amount)}</p>
           </div>
           <div className="flex justify-between">
-            <p className="font-medium text-zinc-900">Shipping</p>
+            <p className="font-medium text-zinc-900">Envío</p>
             <p className="text-zinc-700">{formatPrice(0)}</p>
           </div>
           <div className="flex justify-between">
