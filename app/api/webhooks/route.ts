@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
       }
 
       const { orderId } = purchaseUnits.reference_id
-        ? JSON.parse(webhookEvent.resource.id)
+        ? JSON.parse(purchaseUnits.reference_id)
         : { orderId: null };
 
       console.log("Order Id: ", orderId);
