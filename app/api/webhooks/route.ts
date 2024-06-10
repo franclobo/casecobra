@@ -99,10 +99,8 @@ export async function POST(req: NextRequest) {
       }
 
       const shippingAddress = purchaseUnits.shipping.address;
-      const billingAddress = purchaseUnits.billing_address;
 
       console.log("Shipping address: ", shippingAddress);
-      console.log("Billing address: ", billingAddress);
 
       const updatedOrder = await db.order.update({
         where: {
@@ -118,16 +116,6 @@ export async function POST(req: NextRequest) {
               postalCode: shippingAddress.postal_code,
               street: shippingAddress.address_line_1,
               state: shippingAddress.admin_area_1,
-            },
-          },
-          billingAddress: {
-            create: {
-              name: purchaseUnits.billing_address.name.full_name || "",
-              city: billingAddress.admin_area_2 || "",
-              country: billingAddress.country_code || "",
-              postalCode: billingAddress.postal_code || "",
-              street: billingAddress.address_line_1 || "",
-              state: billingAddress.admin_area_1 || "",
             },
           },
         },
