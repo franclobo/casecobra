@@ -16,8 +16,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { create } from "domain";
 
-
-const  DesignPreview = ({ configuration }: { configuration: Configuration }) => {
+const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
@@ -39,26 +38,6 @@ const  DesignPreview = ({ configuration }: { configuration: Configuration }) => 
     totalPrice += PRODUCT_PRICES.acabado.texturizado;
   if (material === "policarbonato")
     totalPrice += PRODUCT_PRICES.material.policarbonato;
-
-  const handleCheckOut = async () => {
-    try {
-      const response = await createCheckoutSession({
-        configId: configuration.id,
-      });
-      console.log("ORDER: ", response?.order);
-      if (response) {
-        const orderId = response.order?.id;
-        router.push(`/thankyou?orderId=${orderId}`);
-      }
-    } catch (err) {
-      console.error("Error al crear la orden:", err);
-      toast({
-        title: "Error",
-        description: "Hubo un error al crear la orden.",
-        variant: "destructive",
-      });
-    }
-  };
 
   const paypalCreateOrder = async () => {
     try {
@@ -117,7 +96,7 @@ const  DesignPreview = ({ configuration }: { configuration: Configuration }) => 
       variant: "destructive",
     });
     router.push(`/configure/preview?id=${configuration.id}`);
-  }
+  };
 
   return (
     <>
@@ -156,16 +135,16 @@ const  DesignPreview = ({ configuration }: { configuration: Configuration }) => 
               <p className="font-medium text-zinc-950">Detalles</p>
               <ol className="mt-3 text-zinc-700 list-disc list-inside">
                 <li>Compatible con carga wireless</li>
-                <li>Poliuretano termoplástico que absorbe los golpes</li>
+                <li>Poliuretano termoplÃ¡stico que absorbe los golpes</li>
                 <li>Embalaje hecho con materiales reciclados</li>
-                <li>Impresión con 5 años de garantía</li>
+                <li>ImpresiÃ³n con 5 aÃ±os de garantÃ­a</li>
               </ol>
             </div>
             <div>
               <p className="font-medium text-zinc-950">Materiales</p>
               <ol className="mt-3 text-zinc-700 list-disc list-inside">
                 <li>Material duradero de alta calidad</li>
-                <li>Protección contra golpes y arañazos</li>
+                <li>ProtecciÃ³n contra golpes y araÃ±azos</li>
               </ol>
             </div>
           </div>
@@ -240,15 +219,14 @@ const  DesignPreview = ({ configuration }: { configuration: Configuration }) => 
                         },
                         {
                           name: "PAYMENT.SALE.COMPLETED",
-                        }
+                        },
                       ],
                     };
                     await axios.post("/api/webhooks", { body });
                     if (response) {
-                      const orderId = response.order?.id;
+                      const orderId = response.id;
                       router.push(`/thankyou?orderId=${orderId}`);
                     }
-                    console.log("Webhook:", response);
                   }}
                   onCancel={paypalCancelOrder}
                 />
@@ -259,6 +237,6 @@ const  DesignPreview = ({ configuration }: { configuration: Configuration }) => 
       </div>
     </>
   );
-}
+};
 
 export default DesignPreview;
