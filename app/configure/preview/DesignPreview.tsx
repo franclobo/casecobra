@@ -225,7 +225,6 @@ const  DesignPreview = ({ configuration }: { configuration: Configuration }) => 
                     console.log("Order Approved:", orderID);
                     actions.order?.capture().then((details) => {
                       console.log("Order captured:", details);
-                      handleCheckOut();
                     });
                     const body = {
                       url: `${process.env.NEXT_PUBLIC_VERCEL_URL}`,
@@ -246,16 +245,10 @@ const  DesignPreview = ({ configuration }: { configuration: Configuration }) => 
                     };
                     await axios.post("/api/webhooks", { body });
                     if (response) {
-                      const headers = {
-                        "paypal-transmission-id": response.headers["paypal-transmission-id"],
-                        "paypal-transmission-time": response.headers["paypal-transmission-time"],
-                        "paypal-cert-url": response.headers["paypal-cert-url"],
-                        "paypal-transmission-sig": response.headers["paypal-transmission-sig"],
-                      };
-
-                      const webhookEvent = JSON.parse(response.data);
-                      console.log("Webhook event received:", webhookEvent);
+                      const orderId = response.order?.id;
+                      router.push(`/thankyou?orderId=${orderId}`);
                     }
+                    console.log("Webhook:", response);
                   }}
                   onCancel={paypalCancelOrder}
                 />
