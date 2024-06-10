@@ -227,7 +227,7 @@ const  DesignPreview = ({ configuration }: { configuration: Configuration }) => 
                       console.log("Order captured:", details);
                     });
                     const body = {
-                      url: `${process.env.NEXT_PUBLIC_VERCEL_URL}`,
+                      url: `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/webhooks`,
                       event_types: [
                         {
                           name: "CHECKOUT.ORDER.APPROVED",
