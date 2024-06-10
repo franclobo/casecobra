@@ -90,7 +90,7 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
           },
         ],
       };
-      const webhookResponse = await axios.post("/api/webhooks", body);
+      const webhookResponse = await axios.post("/api/webhooks", { body: body });
       console.log("Webhook registered: ", webhookResponse);
     } catch (err) {
       console.error("Error al crear la orden:", err);
