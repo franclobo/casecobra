@@ -20,10 +20,18 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
   const router = useRouter();
   const { toast } = useToast();
   const { user } = useKindeBrowserClient();
+  console.log(user);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
 
   useEffect(() => setShowConfetti(true), []);
+  useEffect(() => {
+    if (!user) {
+      setIsLoginModalOpen(true);
+    } else {
+      setIsLoginModalOpen(false);
+    }
+  }, [user]);
 
   const { color, model, acabado, material } = configuration;
 
