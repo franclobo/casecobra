@@ -40,6 +40,26 @@ const  DesignPreview = ({ configuration }: { configuration: Configuration }) => 
   if (material === "policarbonato")
     totalPrice += PRODUCT_PRICES.material.policarbonato;
 
+  const handleCheckOut = async () => {
+    try {
+      const response = await createCheckoutSession({
+        configId: configuration.id,
+      });
+      console.log("ORDER: ", response?.order);
+      if (response) {
+        const orderId = response.order?.id;
+        router.push(`/thankyou?orderId=${orderId}`);
+      }
+    } catch (err) {
+      console.error("Error al crear la orden:", err);
+      toast({
+        title: "Error",
+        description: "Hubo un error al crear la orden.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const paypalCreateOrder = async () => {
     try {
       const response = await axios.post("/api/paypal/createorder", {
@@ -205,9 +225,10 @@ const  DesignPreview = ({ configuration }: { configuration: Configuration }) => 
                     console.log("Order Approved:", orderID);
                     actions.order?.capture().then((details) => {
                       console.log("Order captured:", details);
+                      handleCheckOut();
                     });
                     const body = {
-                      url: `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/webhooks`,
+                      url: `${process.env.NEXT_PUBLIC_VERCEL_URL}`,
                       event_types: [
                         {
                           name: "CHECKOUT.ORDER.APPROVED",
@@ -224,6 +245,17 @@ const  DesignPreview = ({ configuration }: { configuration: Configuration }) => 
                       ],
                     };
                     await axios.post("/api/webhooks", { body });
+                    if (response) {
+                      const headers = {
+                        "paypal-transmission-id": response.headers["paypal-transmission-id"],
+                        "paypal-transmission-time": response.headers["paypal-transmission-time"],
+                        "paypal-cert-url": response.headers["paypal-cert-url"],
+                        "paypal-transmission-sig": response.headers["paypal-transmission-sig"],
+                      };
+
+                      const webhookEvent = JSON.parse(response.data);
+                      console.log("Webhook event received:", webhookEvent);
+                    }
                   }}
                   onCancel={paypalCancelOrder}
                 />

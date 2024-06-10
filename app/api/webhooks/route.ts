@@ -29,10 +29,10 @@ export async function POST(req: NextRequest) {
     const body = await req.text();
     const headers = req.headers;
 
-    const transmissionId = headers.get("transmissionId");
-    const transmissionTime = headers.get("transmissionTime");
-    const certUrl = headers.get("certUrl");
-    const transmissionSig = headers.get("transmissionSig");
+    const transmissionId = headers.get("paypal-transmission-id");
+    const transmissionTime = headers.get("paypal-transmission-time");
+    const certUrl = headers.get("paypal-cert-url");
+    const transmissionSig = headers.get("paypal-transmission-sig");
 
     // Registro para depuración
     console.log("Received headers:", {
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
     // Registro para depuración
     console.log("Webhook event received:", webhookEvent);
 
-    if (webhookEvent.event_type === "CHECKOUT.ORDER.COMPLETED") {
+    if (webhookEvent.event_type === "PAYMENT.CAPTURE.COMPLETED") {
       const orderID = webhookEvent.resource.id;
       const payerEmail = webhookEvent.resource.payer.email_address;
       const purchaseUnits = webhookEvent.resource.purchase_units[0];
