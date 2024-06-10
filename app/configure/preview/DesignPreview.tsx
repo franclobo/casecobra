@@ -73,25 +73,6 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
         const orderId = response.order?.id;
         router.push(`/thankyou?orderId=${orderId}`);
       }
-      const body = {
-        url: `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/webhooks`,
-        event_types: [
-          {
-            name: "CHECKOUT.ORDER.APPROVED",
-          },
-          {
-            name: "CHECKOUT.ORDER.COMPLETED",
-          },
-          {
-            name: "PAYMENT.CAPTURE.COMPLETED",
-          },
-          {
-            name: "PAYMENT.SALE.COMPLETED",
-          },
-        ],
-      };
-      const webhookResponse = await axios.post("/api/webhooks", { body: body });
-      console.log("Webhook registered: ", webhookResponse);
     } catch (err) {
       console.error("Error al crear la orden:", err);
       toast({
