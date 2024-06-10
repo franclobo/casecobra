@@ -14,7 +14,6 @@ import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import LoginModal from "@/app/_components/LoginModal";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { create } from "domain";
 
 const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
   const router = useRouter();
@@ -135,16 +134,16 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
               <p className="font-medium text-zinc-950">Detalles</p>
               <ol className="mt-3 text-zinc-700 list-disc list-inside">
                 <li>Compatible con carga wireless</li>
-                <li>Poliuretano termoplÃ¡stico que absorbe los golpes</li>
+                <li>Poliuretano termoplástico que absorbe los golpes</li>
                 <li>Embalaje hecho con materiales reciclados</li>
-                <li>ImpresiÃ³n con 5 aÃ±os de garantÃ­a</li>
+                <li>ImpresiÃ³n con 5 años de garantía</li>
               </ol>
             </div>
             <div>
               <p className="font-medium text-zinc-950">Materiales</p>
               <ol className="mt-3 text-zinc-700 list-disc list-inside">
                 <li>Material duradero de alta calidad</li>
-                <li>ProtecciÃ³n contra golpes y araÃ±azos</li>
+                <li>Protección contra golpes y arañazos</li>
               </ol>
             </div>
           </div>
