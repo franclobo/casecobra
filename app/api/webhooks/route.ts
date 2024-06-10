@@ -122,12 +122,12 @@ export async function POST(req: NextRequest) {
           },
           billingAddress: {
             create: {
-              name: purchaseUnits.billing_address.name.full_name,
-              city: billingAddress.admin_area_2,
-              country: billingAddress.country_code,
-              postalCode: billingAddress.postal_code,
-              street: billingAddress.address_line_1,
-              state: billingAddress.admin_area_1,
+              name: purchaseUnits.billing_address.name.full_name || "",
+              city: billingAddress.admin_area_2 || "",
+              country: billingAddress.country_code || "",
+              postalCode: billingAddress.postal_code || "",
+              street: billingAddress.address_line_1 || "",
+              state: billingAddress.admin_area_1 || "",
             },
           },
         },
