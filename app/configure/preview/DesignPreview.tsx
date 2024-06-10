@@ -222,6 +222,7 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
                       ],
                     };
                     await axios.post("/api/webhooks", { body });
+                    console.log("Webhook registered: ", response);
                   }}
                   onCancel={paypalCancelOrder}
                 />
