@@ -4,7 +4,10 @@ import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import crypto from "crypto";
 import crc32 from "crc-32";
+import { Resend } from "resend";
+import OrderReceivedEmail from "@/components/emails/OrderReceivedEmail";
 
+const resend = new Resend(process.env.RESEND_API_KEY!);
 // Función para verificar la firma del webhook de PayPal
 // Función para descargar y cachear el certificado de PayPal
 const WEBHOOK_ID = process.env.PAYPAL_WEBHOOK_ID!;
@@ -19,7 +22,7 @@ async function verifyPayPalWebhookSignature(
   event: string,
   headers: { [key: string]: string },
 ): Promise<boolean> {
-  
+
   const transmissionId = headers["paypal-transmission-id"];
   const timeStamp = headers["paypal-transmission-time"];
   const crcHex = crc32.str(event).toString(16).padStart(8, "0"); // hex crc32 of raw event data, ensure it's 8 characters long
@@ -126,6 +129,25 @@ export async function POST(req: NextRequest) {
 
       // Envía un correo electrónico al cliente
       // Aquí debes implementar tu lógica para enviar un correo electrónico al cliente sobre el pedido completado
+      await resend.emails.send({
+        from: "CaseCobra <fjbl2788@gmail.com>",
+        to: payerEmail,
+        subject: "¡Gracias por tu compra!",
+        react: OrderReceivedEmail({
+          orderId,
+          orderDate: updatedOrder.createdAt.toLocaleDateString(),
+          // @ts-ignore
+          shippingAddress: {
+            name: purchaseUnits.shipping.name.full_name,
+            city: shippingAddress.admin_area_2,
+            country: shippingAddress.country_code,
+            postalCode: shippingAddress.postal_code,
+            street: shippingAddress.address_line_1,
+            state: shippingAddress.admin_area_1,
+          },
+        }),
+      });
+
 
       return NextResponse.json({ result: updatedOrder, ok: true });
     }
