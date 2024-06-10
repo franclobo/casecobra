@@ -210,8 +210,17 @@ const  DesignPreview = ({ configuration }: { configuration: Configuration }) => 
                       url: `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/webhooks`,
                       event_types: [
                         {
+                          name: "CHECKOUT.ORDER.APPROVED",
+                        },
+                        {
+                          name: "CHECKOUT.ORDER.COMPLETED",
+                        },
+                        {
                           name: "PAYMENT.CAPTURE.COMPLETED",
                         },
+                        {
+                          name: "PAYMENT.SALE.COMPLETED",
+                        }
                       ],
                     };
                     await axios.post("/api/webhooks", { body });

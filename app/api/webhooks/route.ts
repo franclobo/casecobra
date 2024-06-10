@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
     // Registro para depuración
     console.log("Webhook event received:", webhookEvent);
 
-    if (webhookEvent.event_type === "PAYMENT.CAPTURE.COMPLETED") {
+    if (webhookEvent.event_type === "CHECKOUT.ORDER.COMPLETED") {
       const orderID = webhookEvent.resource.id;
       const payerEmail = webhookEvent.resource.payer.email_address;
       const purchaseUnits = webhookEvent.resource.purchase_units[0];
