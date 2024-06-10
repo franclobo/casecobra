@@ -9,13 +9,14 @@ async function verifyPayPalWebhookSignature(
   body: string,
   transmissionId: string,
   transmissionTime: string,
-  transmissionSig: string,
-  certUrl: string
+  certUrl: string,
+  transmissionSig: string
 ): Promise<boolean> {
   try {
     // Fetch PayPal's public certificate
     const response = await axios.get(certUrl);
     const cert = response.data;
+    console.log("PayPal certificate:", cert);
 
     // Create the expected signature
     const verifier = crypto.createVerify("sha256");
@@ -72,7 +73,6 @@ export async function POST(req: NextRequest) {
     console.log("Webhook event received:", webhookEvent);
 
     if (
-      webhookEvent.event_type === "CHECKOUT.ORDER.APPROVED" ||
       webhookEvent.event_type === "PAYMENT.CAPTURE.COMPLETED"
     ) {
       const orderID = webhookEvent.resource.id;
