@@ -127,8 +127,6 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      // Envía un correo electrónico al cliente
-      // Aquí debes implementar tu lógica para enviar un correo electrónico al cliente sobre el pedido completado
       await resend.emails.send({
         from: "CaseCobra <fjbl2788@gmail.com>",
         to: payerEmail,
