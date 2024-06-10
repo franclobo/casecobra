@@ -12,23 +12,27 @@ async function verifyPayPalWebhookSignature(
   transmissionSig: string,
   certUrl: string
 ): Promise<boolean> {
-  // Fetch PayPal's public certificate
-  const response = await axios.get(certUrl);
-  const cert = response.data;
+  try {
+    // Fetch PayPal's public certificate
+    const response = await axios.get(certUrl);
+    const cert = response.data;
 
-  // Create the expected signature
-  const expectedSignature = crypto
-    .createVerify("sha256")
-    .update(transmissionId + "|" + transmissionTime + "|" + body)
-    .verify(cert, transmissionSig, "base64");
+    // Create the expected signature
+    const verifier = crypto.createVerify("sha256");
+    verifier.update(transmissionId + "|" + transmissionTime + "|" + body);
+    const expectedSignature = verifier.verify(cert, transmissionSig, "base64");
+    console.log("Expected signature:", expectedSignature);
 
-  return expectedSignature;
+    return expectedSignature;
+  } catch (error) {
+    console.error("Error verifying signature:", error);
+    return false;
+  }
 }
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.text();
-
 
     const transmissionId = headers().get("paypal-transmission-id");
     const transmissionTime = headers().get("paypal-transmission-time");
@@ -67,7 +71,10 @@ export async function POST(req: NextRequest) {
     // Registro para depuración
     console.log("Webhook event received:", webhookEvent);
 
-    if (webhookEvent.event_type === "CHECKOUT.ORDER.APPROVED" || webhookEvent.event_type === "PAYMENT.CAPTURE.COMPLETED") {
+    if (
+      webhookEvent.event_type === "CHECKOUT.ORDER.APPROVED" ||
+      webhookEvent.event_type === "PAYMENT.CAPTURE.COMPLETED"
+    ) {
       const orderID = webhookEvent.resource.id;
       const payerEmail = webhookEvent.resource.payer.email_address;
       const purchaseUnits = webhookEvent.resource.purchase_units[0];
