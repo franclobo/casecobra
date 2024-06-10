@@ -42,6 +42,6 @@ export function constructMetadata({
       creator: "@Pancho2788",
     },
     icons,
-    metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL!),
+    metadataBase: new URL("https://casecobra-nine-iota.vercel.app/"),
   };
 }
