@@ -3,43 +3,42 @@ import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import crypto from "crypto";
+import crc32 from "crc-32";
+
+// Función para verificar la firma del webhook de PayPal
+// Función para descargar y cachear el certificado de PayPal
+const WEBHOOK_ID = process.env.PAYPAL_WEBHOOK_ID!;
+
+async function downloadAndCache(certUrl: string): Promise<string> {
+  const response = await axios.get(certUrl);
+  return response.data;
+}
 
 // Función para verificar la firma del webhook de PayPal
 async function verifyPayPalWebhookSignature(
-  body: string,
-  transmissionId: string,
-  transmissionTime: string,
-  transmissionSig: string,
-  certUrl: string
+  event: string,
+  headers: { [key: string]: string },
 ): Promise<boolean> {
-  try {
-    // Registro para depuración
-    console.log("Verifying PayPal webhook signature...", {
-      body,
-      transmissionId,
-      transmissionTime,
-      transmissionSig,
-      certUrl,
-    });
-    // Fetch PayPal's public certificate
-    const response = await axios.get(certUrl);
-    const cert = response.data;
-    console.log("PayPal certificate:", cert);
 
-    const data = transmissionId + "|" + transmissionTime + "|" + body;
-    console.log("Datos concatenados para la firma:", data);
+  const transmissionId = headers["paypal-transmission-id"];
+  const timeStamp = headers["paypal-transmission-time"];
+  const crc = parseInt("0x" + crc32.str(event).toString(16), 16); // hex crc32 of raw event data, parsed to decimal form
 
-    // Create the expected signature
-    const verifier = crypto.createVerify("sha256");
-    verifier.update(data, "utf8");
-    const expectedSignature = verifier.verify(cert, transmissionSig, "base64");
-    console.log("Firma esperada:", expectedSignature);
+  const message = `${transmissionId}|${timeStamp}|${WEBHOOK_ID}|${crc}`;
+  console.log(`Original signed message: ${message}`);
 
-    return expectedSignature;
-  } catch (error) {
-    console.error("Error verifying signature:", error);
-    return false;
-  }
+  const certPem = await downloadAndCache(headers["paypal-cert-url"]);
+
+  // Create buffer from base64-encoded signature
+  const signatureBuffer = Buffer.from(headers["paypal-transmission-sig"], "base64");
+
+  // Create a verification object
+  const verifier = crypto.createVerify("SHA256");
+
+  // Add the original message to the verifier
+  verifier.update(message);
+
+  return verifier.verify(certPem, signatureBuffer);
 }
 
 export async function POST(req: NextRequest) {
@@ -59,18 +58,17 @@ export async function POST(req: NextRequest) {
       transmissionSig,
     });
 
-    if (!transmissionId || !transmissionTime || !certUrl || !transmissionSig) {
-      console.error("Invalid signature headers");
-      return new Response("Invalid signature headers", { status: 400 });
-    }
+    const headersObj = {
+      "paypal-transmission-id": transmissionId!,
+      "paypal-transmission-time": transmissionTime!,
+      "paypal-cert-url": certUrl!,
+      "paypal-transmission-sig": transmissionSig!,
+    };
 
     // Verificar la firma del webhook de PayPal
     const signatureVerified = await verifyPayPalWebhookSignature(
       body,
-      transmissionId,
-      transmissionTime,
-      transmissionSig,
-      certUrl
+      headersObj
     );
 
     if (!signatureVerified) {
