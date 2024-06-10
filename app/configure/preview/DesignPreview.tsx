@@ -70,7 +70,7 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
       });
       console.log("ORDER: ", response?.order);
       if (response) {
-        const orderId = response.order?.id;
+        const orderId = response.order?.configurationId;
         router.push(`/thankyou?orderId=${orderId}`);
       }
     } catch (err) {

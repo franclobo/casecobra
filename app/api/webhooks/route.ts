@@ -82,7 +82,8 @@ export async function POST(req: NextRequest) {
     console.log("Webhook event received:", webhookEvent);
 
     if (
-      webhookEvent.event_type === "PAYMENT.CAPTURE.COMPLETED"
+      webhookEvent.event_type === "PAYMENT.CAPTURE.COMPLETED" ||
+      webhookEvent.event_type === "CHECKOUT.ORDER.APPROVED"
     ) {
       const orderID = webhookEvent.resource.id;
       const payerEmail = webhookEvent.resource.payer.email_address;
@@ -95,6 +96,8 @@ export async function POST(req: NextRequest) {
       const { userId, orderId } = purchaseUnits.custom_id
         ? JSON.parse(purchaseUnits.custom_id)
         : { userId: null, orderId: null };
+
+      console.log("Purchase units: ", { userId, orderId });
 
       if (!userId || !orderId) {
         throw new Error("Invalid request metadata");
