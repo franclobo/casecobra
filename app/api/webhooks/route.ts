@@ -31,7 +31,7 @@ async function verifyPayPalWebhookSignature(
 
     // Create the expected signature
     const verifier = crypto.createVerify("sha256");
-    verifier.update(data);
+    verifier.update(data, "utf8");
     const expectedSignature = verifier.verify(cert, transmissionSig, "base64");
     console.log("Firma esperada:", expectedSignature);
 
