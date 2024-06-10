@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import crypto from "crypto";
 
-// Función para verificar la firma del webhook de PayPal
 async function verifyPayPalWebhookSignature(
   body: string,
   transmissionId: string,
@@ -29,12 +28,11 @@ export async function POST(req: NextRequest) {
     const body = await req.text();
     const headers = req.headers;
 
-    const transmissionId = headers.get("paypal-transmission-id");
-    const transmissionTime = headers.get("paypal-transmission-time");
-    const certUrl = headers.get("paypal-cert-url");
-    const transmissionSig = headers.get("paypal-transmission-sig");
+    const transmissionId = headers.get("transmissionId");
+    const transmissionTime = headers.get("transmissionTime");
+    const certUrl = headers.get("certUrl");
+    const transmissionSig = headers.get("transmissionSig");
 
-    // Registro para depuración
     console.log("Received headers:", {
       transmissionId,
       transmissionTime,
@@ -63,10 +61,9 @@ export async function POST(req: NextRequest) {
 
     const webhookEvent = JSON.parse(body);
 
-    // Registro para depuración
     console.log("Webhook event received:", webhookEvent);
 
-    if (webhookEvent.event_type === "PAYMENT.CAPTURE.COMPLETED") {
+    if (webhookEvent.event_type === "CHECKOUT.ORDER.COMPLETED") {
       const orderID = webhookEvent.resource.id;
       const payerEmail = webhookEvent.resource.payer.email_address;
       const purchaseUnits = webhookEvent.resource.purchase_units[0];
@@ -115,8 +112,8 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      // Envía un correo electrónico al cliente
-      // Aquí debes implementar tu lógica para enviar un correo electrónico al cliente sobre el pedido completado
+      // EnvÃ­a un correo electrÃ³nico al cliente
+      // AquÃ­ debes implementar tu lÃ³gica para enviar un correo electrÃ³nico al cliente sobre el pedido completado
 
       return NextResponse.json({ result: updatedOrder, ok: true });
     }
