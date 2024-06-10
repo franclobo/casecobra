@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import crypto from "crypto";
 import crc32 from "crc-32";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 // Función para verificar la firma del webhook de PayPal
 // Función para descargar y cachear el certificado de PayPal
@@ -82,7 +83,6 @@ export async function POST(req: NextRequest) {
     console.log("Webhook event received:", webhookEvent);
 
     if (webhookEvent.event_type === "CHECKOUT.ORDER.APPROVED") {
-      const orderID = webhookEvent.resource.id;
       const payerEmail = webhookEvent.resource.payer.email_address;
       const purchaseUnits = webhookEvent.resource.purchase_units[0];
 
@@ -90,13 +90,13 @@ export async function POST(req: NextRequest) {
         throw new Error("Missing user email");
       }
 
-      const { userId, orderId } = purchaseUnits.custom_id
-        ? JSON.parse(purchaseUnits.custom_id)
-        : { userId: null, orderId: null };
+      const { orderId } = purchaseUnits.reference_id
+        ? JSON.parse(webhookEvent.resource.id)
+        : { orderId: null };
 
-      console.log("Purchase units: ", { userId, orderId });
+      console.log("Order Id: ", orderId);
 
-      if (!userId || !orderId) {
+      if (!orderId) {
         throw new Error("Invalid request metadata");
       }
 

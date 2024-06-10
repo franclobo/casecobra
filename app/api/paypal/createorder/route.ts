@@ -78,6 +78,7 @@ export const POST = async (
       intent: "CAPTURE",
       purchase_units: [
         {
+          reference_id: order.id,
           amount: {
             currency_code: "USD",
             value: formattedPrice,
