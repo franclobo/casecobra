@@ -2,16 +2,14 @@
 
 import { db } from "@/db";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import axios from "axios";
 
 export const getPaymentStatus = async ({ orderId }: { orderId: string }) => {
-const { getUser } = getKindeServerSession();
-const user = await getUser();
-console.log(user);
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
 
-if (!user) {
-  throw new Error("You need to be logged in");
-}
+  if (!user?.id || !user.email) {
+    throw new Error("You need to be logged in to view this page.");
+  }
 
   const order = await db.order.findFirst({
     where: { id: orderId, userId: user.id },
@@ -24,22 +22,10 @@ if (!user) {
   });
 
   if (!order) throw new Error("This order does not exist.");
-  console.log(order);
 
   if (order.isPaid) {
     return order;
   } else {
     return false;
   }
-};
-
-export const invokeWebhookAndGetPaymentStatus = async ({
-  orderId,
-}: {
-  orderId: string;
-}) => {
-
-  const paymentStatus = await getPaymentStatus({ orderId });
-
-  return paymentStatus;
 };

@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { invokeWebhookAndGetPaymentStatus } from "./actions";
+import { getPaymentStatus } from "./actions";
 import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import PhonePreview from "../_components/PhonePreview";
@@ -13,11 +13,10 @@ const ThankYou = () => {
 
   const { data } = useQuery({
     queryKey: ["get-payment-status"],
-    queryFn: async () => await invokeWebhookAndGetPaymentStatus({ orderId }),
+    queryFn: async () => await getPaymentStatus({ orderId }),
     retry: true,
     retryDelay: 500,
   });
-
   console.log(data);
 
   if (data === undefined) {
@@ -72,9 +71,9 @@ const ThankYou = () => {
             </h4>
             <p className="mt-2 text-sm text-zinc-600">
               Creemos que una carcasa no solo debe verse bien, sino también
-              durarte por los años venideros. Ofrecemos una garantía de impresión
-              de 5 años: si tu carcasa no es de la más alta calidad, la
-              reemplazaremos de forma gratuita.
+              durarte por los años venideros. Ofrecemos una garantía de
+              impresión de 5 años: si tu carcasa no es de la más alta calidad,
+              la reemplazaremos de forma gratuita.
             </p>
           </div>
         </div>

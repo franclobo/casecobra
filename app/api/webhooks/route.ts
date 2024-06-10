@@ -1,4 +1,5 @@
 import { db } from "@/db";
+import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import crypto from "crypto";
@@ -27,12 +28,12 @@ async function verifyPayPalWebhookSignature(
 export async function POST(req: NextRequest) {
   try {
     const body = await req.text();
-    const headers = req.headers;
 
-    const transmissionId = headers.get("paypal-transmission-id");
-    const transmissionTime = headers.get("paypal-transmission-time");
-    const certUrl = headers.get("paypal-cert-url");
-    const transmissionSig = headers.get("paypal-transmission-sig");
+
+    const transmissionId = headers().get("paypal-transmission-id");
+    const transmissionTime = headers().get("paypal-transmission-time");
+    const certUrl = headers().get("paypal-cert-url");
+    const transmissionSig = headers().get("paypal-transmission-sig");
 
     // Registro para depuración
     console.log("Received headers:", {
