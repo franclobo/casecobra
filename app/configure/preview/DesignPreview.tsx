@@ -11,6 +11,7 @@ import { Check } from "lucide-react";
 import { BASE_PRICE, PRODUCT_PRICES } from "@/config/products";
 import { useToast } from "@/components/ui/use-toast";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import LoginModal from "@/app/_components/LoginModal";
 import { useRouter } from "next/navigation";
 import axios from "axios";
@@ -18,6 +19,7 @@ import axios from "axios";
 const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
   const router = useRouter();
   const { toast } = useToast();
+  const { user } = useKindeBrowserClient();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
 
@@ -39,27 +41,32 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
     totalPrice += PRODUCT_PRICES.material.policarbonato;
 
   const paypalCreateOrder = async () => {
-    try {
-      const response = await axios.post("/api/paypal/createorder", {
-        configId: configuration,
-      });
+    if (user) {
+      try {
+        const response = await axios.post("/api/paypal/createorder", {
+          configId: configuration,
+        });
 
-      if (response.status !== 200) {
-        throw new Error(
-          response.data.error || "Error al crear la orden en PayPal"
-        );
+        if (response.status !== 200) {
+          throw new Error(
+            response.data.error || "Error al crear la orden en PayPal"
+          );
+        }
+
+        console.log("Order ID:", response.data.orderId);
+        return response.data.orderId;
+      } catch (err) {
+        console.error("Error al crear la orden:", err);
+        toast({
+          title: "Error",
+          description: "Hubo un error al crear la orden.",
+          variant: "destructive",
+        });
+        return null;
       }
-
-      console.log("Order ID:", response.data.orderId);
-      return response.data.orderId;
-    } catch (err) {
-      console.error("Error al crear la orden:", err);
-      toast({
-        title: "Error",
-        description: "Hubo un error al crear la orden.",
-        variant: "destructive",
-      });
-      return null;
+    } else {
+      localStorage.setItem("configurationId", configuration.id);
+      setIsLoginModalOpen(true);
     }
   };
 
@@ -129,15 +136,15 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
           config={{ elementCount: 200, spread: 90 }}
         />
       </div>
-      <div className="mt-20 grid grid-cols-1 text-sm sm:grid-cols-12 sm:gap-x-6 md:gap-x-8 lg:gap-x-12">
-        <div className="sm:col-span-4 md:col-span-3 md:row-span-2 md:row-end-2">
+      <LoginModal isOpen={isLoginModalOpen} setIsOpen={setIsLoginModalOpen} />
+
+      <div className="mt-20 flex flex-col items-center md:grid text-sm sm:grid-cols-12 sm:grid-rows-1 sm:gap-x-6 md:gap-x-8 lg:gap-x-12">
+        <div className="md:col-span-4 lg:col-span-3 md:row-span-2 md:row-end-2">
           <Phone
-            className={cn(`bg-${tw}`)}
+            className={cn(`bg-${tw}`, "max-w-[150px] md:max-w-full")}
             imgSrc={configuration.croppedImageUrl!}
           />
         </div>
-
-        <LoginModal isOpen={isLoginModalOpen} setIsOpen={setIsLoginModalOpen} />
 
         <div className="mt-6 sm:col-span-9 sm:mt-0 md:row-end-1">
           <h3 className="text-3xl font-bold tracking-tight text-gray-900">
