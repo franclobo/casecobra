@@ -73,6 +73,29 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
         const orderId = response.order?.id;
         router.push(`/thankyou?orderId=${orderId}`);
       }
+      const body = {
+        url: `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/webhooks`,
+        event_types: [
+          {
+            name: "CHECKOUT.ORDER.APPROVED",
+          },
+          {
+            name: "CHECKOUT.ORDER.COMPLETED",
+          },
+          {
+            name: "PAYMENT.CAPTURE.COMPLETED",
+          },
+          {
+            name: "PAYMENT.SALE.COMPLETED",
+          },
+        ],
+      };
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.PAYPAL_ACCESS_TOKEN}`,
+      };
+      await axios.post("/api/webhooks", body, { headers });
+      console.log("Webhook registered: ", body);
     } catch (err) {
       console.error("Error al crear la orden:", err);
       toast({
