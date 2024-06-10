@@ -9,8 +9,8 @@ async function verifyPayPalWebhookSignature(
   body: string,
   transmissionId: string,
   transmissionTime: string,
-  certUrl: string,
-  transmissionSig: string
+  transmissionSig: string,
+  certUrl: string
 ): Promise<boolean> {
   try {
     // Fetch PayPal's public certificate
