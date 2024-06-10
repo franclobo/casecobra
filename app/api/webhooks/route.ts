@@ -90,9 +90,7 @@ export async function POST(req: NextRequest) {
         throw new Error("Missing user email");
       }
 
-      const { orderId } = purchaseUnits.reference_id
-        ? JSON.parse(purchaseUnits.reference_id)
-        : { orderId: null };
+      const orderId = purchaseUnits.reference_id;
 
       console.log("Order Id: ", orderId);
 
