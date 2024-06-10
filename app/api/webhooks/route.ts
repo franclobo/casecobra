@@ -81,10 +81,7 @@ export async function POST(req: NextRequest) {
     // Registro para depuración
     console.log("Webhook event received:", webhookEvent);
 
-    if (
-      webhookEvent.event_type === "PAYMENT.CAPTURE.COMPLETED" ||
-      webhookEvent.event_type === "CHECKOUT.ORDER.APPROVED"
-    ) {
+    if (webhookEvent.event_type === "CHECKOUT.ORDER.APPROVED") {
       const orderID = webhookEvent.resource.id;
       const payerEmail = webhookEvent.resource.payer.email_address;
       const purchaseUnits = webhookEvent.resource.purchase_units[0];
@@ -105,6 +102,9 @@ export async function POST(req: NextRequest) {
 
       const shippingAddress = purchaseUnits.shipping.address;
       const billingAddress = purchaseUnits.billing_address;
+
+      console.log("Shipping address: ", shippingAddress);
+      console.log("Billing address: ", billingAddress);
 
       const updatedOrder = await db.order.update({
         where: {
