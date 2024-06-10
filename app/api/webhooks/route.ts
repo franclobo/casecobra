@@ -29,10 +29,10 @@ export async function POST(req: NextRequest) {
     const body = await req.text();
     const headers = req.headers;
 
-    const transmissionId = headers.get("paypal-transmission-id");
-    const transmissionTime = headers.get("paypal-transmission-time");
-    const certUrl = headers.get("paypal-cert-url");
-    const transmissionSig = headers.get("paypal-transmission-sig");
+    const transmissionId = headers.get("transmissionId");
+    const transmissionTime = headers.get("transmissionTime");
+    const certUrl = headers.get("certUrl");
+    const transmissionSig = headers.get("transmissionSig");
 
     // Registro para depuración
     console.log("Received headers:", {

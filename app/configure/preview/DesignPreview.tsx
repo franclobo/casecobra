@@ -224,10 +224,6 @@ const  DesignPreview = ({ configuration }: { configuration: Configuration }) => 
                       ],
                     };
                     await axios.post("/api/webhooks", { body });
-                    if (response) {
-                      const orderId = response.id;
-                      router.push(`/thankyou?orderId=${orderId}`);
-                    }
                   }}
                   onCancel={paypalCancelOrder}
                 />
