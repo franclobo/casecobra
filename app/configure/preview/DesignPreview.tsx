@@ -63,6 +63,46 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
     }
   };
 
+  const handleCheckOut = async () => {
+    try {
+      const response = await createCheckoutSession({
+        configId: configuration.id,
+      });
+      console.log("ORDER: ", response?.order);
+      if (response) {
+        const orderId = response.order?.id;
+        router.push(`/thankyou?orderId=${orderId}`);
+      }
+      const body = {
+        url: `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/webhooks`,
+        event_types: [
+          {
+            name: "CHECKOUT.ORDER.APPROVED",
+          },
+          {
+            name: "CHECKOUT.ORDER.COMPLETED",
+          },
+          {
+            name: "PAYMENT.CAPTURE.COMPLETED",
+          },
+          {
+            name: "PAYMENT.SALE.COMPLETED",
+          },
+        ],
+      };
+      const webhookResponse = await axios.post("/api/webhooks", body);
+      console.log("Webhook registered: ", webhookResponse);
+    } catch (err) {
+      console.error("Error al crear la orden:", err);
+      toast({
+        title: "Error",
+        description: "Hubo un error al crear la orden.",
+        variant: "destructive",
+      });
+    }
+  };
+
+
   const paypalCaptureOrder = async (orderId: string) => {
     try {
       const response = await axios.post("/api/paypal/captureorder", {
@@ -203,26 +243,8 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
                     console.log("Order Approved:", orderID);
                     actions.order?.capture().then((details) => {
                       console.log("Order captured:", details);
+                      handleCheckOut();
                     });
-                    const body = {
-                      url: `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/webhooks`,
-                      event_types: [
-                        {
-                          name: "CHECKOUT.ORDER.APPROVED",
-                        },
-                        {
-                          name: "CHECKOUT.ORDER.COMPLETED",
-                        },
-                        {
-                          name: "PAYMENT.CAPTURE.COMPLETED",
-                        },
-                        {
-                          name: "PAYMENT.SALE.COMPLETED",
-                        },
-                      ],
-                    };
-                    await axios.post("/api/webhooks", { body });
-                    console.log("Webhook registered: ", response);
                   }}
                   onCancel={paypalCancelOrder}
                 />
