@@ -8,7 +8,7 @@ export const getPaymentStatus = async ({ orderId }: { orderId: string }) => {
   const user = await getUser();
 
   if (!user?.id || !user.email) {
-    throw new Error("You need to be logged in to view this page.");
+    throw new Error("Debes iniciar sesión para ver esta página.");
   }
 
   const order = await db.order.findFirst({

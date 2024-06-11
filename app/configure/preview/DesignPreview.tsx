@@ -41,26 +41,30 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
     totalPrice += PRODUCT_PRICES.material.policarbonato;
 
   const paypalCreateOrder = async () => {
-    try {
-      const response = await axios.post("/api/paypal/createorder", {
-        configId: configuration,
-      });
+    if (user) {
+      try {
+        const response = await axios.post("/api/paypal/createorder", {
+          configId: configuration,
+        });
 
-      if (response.status !== 200) {
-        throw new Error(
-          response.data.error || "Error al crear la orden en PayPal"
-        );
+        if (response.status !== 200) {
+          throw new Error(
+            response.data.error || "Error al crear la orden en PayPal"
+          );
+        }
+        return response.data.orderId;
+      } catch (err) {
+        console.error("Error al crear la orden:", err);
+        toast({
+          title: "Error",
+          description: "Hubo un error al crear la orden.",
+          variant: "destructive",
+        });
+        return null;
       }
-      return response.data.orderId;
-    } catch (err) {
-      console.error("Error al crear la orden:", err);
-      toast({
-        title: "Error",
-        description: "Hubo un error al crear la orden.",
-        variant: "destructive",
-      });
-      if(!user){setIsLoginModalOpen(true);}
-      return null;
+    } else {
+      localStorage.setItem("configurationId", configuration.id);
+      setIsLoginModalOpen(true);
     }
   };
 
