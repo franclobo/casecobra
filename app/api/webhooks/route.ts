@@ -44,6 +44,10 @@ async function verifyPayPalWebhookSignature(
 
   // Add the original message to the verifier
   verifier.update(message);
+  console.log(
+    "Verifying signature...",
+    verifier.verify(certPem, signatureBuffer)
+  );
 
   return verifier.verify(certPem, signatureBuffer);
 }
