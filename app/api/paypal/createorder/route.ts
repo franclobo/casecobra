@@ -20,6 +20,7 @@ export const POST = async (
         id: configId.id,
       },
     });
+    console.log(configuration);
     if (!configuration) {
       return NextResponse.json(
         { error: "Configuration not found" },
@@ -29,6 +30,7 @@ export const POST = async (
 
     const { getUser } = getKindeServerSession();
     const user = await getUser();
+    console.log(user);
     if (!user) {
       return NextResponse.json(
         { error: "User not found" },
@@ -45,6 +47,7 @@ export const POST = async (
     if (material === "policarbonato") {
       price += PRODUCT_PRICES.material.policarbonato;
     }
+    console.log(price);
 
     let order: Order | undefined = undefined;
 
@@ -68,6 +71,7 @@ export const POST = async (
     }
 
     const formattedPrice = (price / 100).toFixed(2);
+    console.log(order);
     const paypalRequest = new paypal.orders.OrdersCreateRequest();
     paypalRequest.prefer("return=representation");
     paypalRequest.requestBody({
@@ -125,6 +129,7 @@ export const POST = async (
     });
 
     const response = await client.execute(paypalRequest);
+    console.log(response.result);
     return (
       NextResponse.json(
         {

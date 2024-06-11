@@ -8,6 +8,8 @@ import { Resend } from "resend";
 import OrderReceivedEmail from "@/components/emails/OrderReceivedEmail";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
+// Función para verificar la firma del webhook de PayPal
+// Función para descargar y cachear el certificado de PayPal
 const WEBHOOK_ID = process.env.PAYPAL_WEBHOOK_ID!;
 
 async function downloadAndCache(certUrl: string): Promise<string> {
@@ -15,32 +17,33 @@ async function downloadAndCache(certUrl: string): Promise<string> {
   return response.data;
 }
 
+// Función para verificar la firma del webhook de PayPal
 async function verifyPayPalWebhookSignature(
   event: string,
-  headers: { [key: string]: string }
+  headers: { [key: string]: string },
 ): Promise<boolean> {
+
   const transmissionId = headers["paypal-transmission-id"];
   const timeStamp = headers["paypal-transmission-time"];
-  const crcHex = crc32.str(event).toString(16).padStart(8, "0");
-  const crc = parseInt(crcHex, 16);
+  const crcHex = crc32.str(event).toString(16).padStart(8, "0"); // hex crc32 of raw event data, ensure it's 8 characters long
+  const crc = parseInt(crcHex, 16); // parse hex string to decimal// hex crc32 of raw event data, parsed to decimal form
 
   const message = `${transmissionId}|${timeStamp}|${WEBHOOK_ID}|${crc}`;
   console.log(`Original signed message: ${message}`);
 
   const certPem = await downloadAndCache(headers["paypal-cert-url"]);
 
+  // Create buffer from base64-encoded signature
   const signatureBuffer = Buffer.from(
     headers["paypal-transmission-sig"],
     "base64"
   );
 
+  // Create a verification object
   const verifier = crypto.createVerify("SHA256");
 
+  // Add the original message to the verifier
   verifier.update(message);
-  console.log(
-    "Verifying signature...",
-    verifier.verify(certPem, signatureBuffer)
-  );
 
   return verifier.verify(certPem, signatureBuffer);
 }
@@ -55,6 +58,7 @@ export async function POST(req: NextRequest) {
     const certUrl = headers().get("paypal-cert-url");
     const transmissionSig = headers().get("paypal-transmission-sig");
 
+    // Registro para depuración
     console.log("Received headers:", {
       transmissionId,
       transmissionTime,
@@ -82,6 +86,7 @@ export async function POST(req: NextRequest) {
 
     const webhookEvent = JSON.parse(body);
 
+    // Registro para depuración
     console.log("Webhook event received:", webhookEvent);
 
     if (webhookEvent.event_type === "CHECKOUT.ORDER.APPROVED") {
@@ -126,7 +131,7 @@ export async function POST(req: NextRequest) {
       await resend.emails.send({
         from: "CaseCobra <fjbl2788@gmail.com>",
         to: payerEmail,
-        subject: "Â¡Gracias por tu compra!",
+        subject: "¡Gracias por tu compra!",
         react: OrderReceivedEmail({
           orderId,
           orderDate: updatedOrder.createdAt.toLocaleDateString(),
@@ -141,6 +146,7 @@ export async function POST(req: NextRequest) {
           },
         }),
       });
+
 
       return NextResponse.json({ result: updatedOrder, ok: true });
     }
