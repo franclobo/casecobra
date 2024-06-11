@@ -20,18 +20,10 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
   const router = useRouter();
   const { toast } = useToast();
   const { user } = useKindeBrowserClient();
-  console.log(user);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
 
   useEffect(() => setShowConfetti(true), []);
-  useEffect(() => {
-    if (!user) {
-      setIsLoginModalOpen(true);
-    } else {
-      setIsLoginModalOpen(false);
-    }
-  }, [user]);
 
   const { color, model, acabado, material } = configuration;
 
@@ -49,32 +41,26 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
     totalPrice += PRODUCT_PRICES.material.policarbonato;
 
   const paypalCreateOrder = async () => {
-    if (user) {
-      try {
-        const response = await axios.post("/api/paypal/createorder", {
-          configId: configuration,
-        });
+    try {
+      const response = await axios.post("/api/paypal/createorder", {
+        configId: configuration,
+      });
 
-        if (response.status !== 200) {
-          throw new Error(
-            response.data.error || "Error al crear la orden en PayPal"
-          );
-        }
-
-        console.log("Order ID:", response.data.orderId);
-        return response.data.orderId;
-      } catch (err) {
-        console.error("Error al crear la orden:", err);
-        toast({
-          title: "Error",
-          description: "Hubo un error al crear la orden.",
-          variant: "destructive",
-        });
-        return null;
+      if (response.status !== 200) {
+        throw new Error(
+          response.data.error || "Error al crear la orden en PayPal"
+        );
       }
-    } else {
-      localStorage.setItem("configurationId", configuration.id);
-      setIsLoginModalOpen(true);
+      return response.data.orderId;
+    } catch (err) {
+      console.error("Error al crear la orden:", err);
+      toast({
+        title: "Error",
+        description: "Hubo un error al crear la orden.",
+        variant: "destructive",
+      });
+      if(!user){setIsLoginModalOpen(true);}
+      return null;
     }
   };
 
@@ -83,7 +69,6 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
       const response = await createCheckoutSession({
         configId: configuration.id,
       });
-      console.log("ORDER: ", response?.order);
       if (response) {
         const orderId = response.order?.id;
         router.push(`/thankyou?orderId=${orderId}`);
@@ -111,7 +96,6 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
         );
       }
 
-      console.log("Order captured:", response.data);
       return response.data;
     } catch (err) {
       console.error("Error al capturar la orden:", err);
@@ -236,9 +220,17 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
                   onApprove={async (data, actions) => {
                     let response = await paypalCaptureOrder(data.orderID);
                     const orderID = response.result.id;
-                    console.log("Order Approved:", orderID);
+                    toast({
+                      title: "Success",
+                      description: `Orden aprovada: ${orderID}`,
+                      variant: "default",
+                    });
                     actions.order?.capture().then((details) => {
-                      console.log("Order captured:", details);
+                      toast({
+                        title: "Success",
+                        description: `Orden capturada: ${details.id}`,
+                        variant: "default",
+                      });
                       handleCheckOut();
                     });
                   }}
