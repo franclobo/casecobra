@@ -37,6 +37,10 @@ async function verifyPayPalWebhookSignature(
   const verifier = crypto.createVerify("SHA256");
 
   verifier.update(message);
+  console.log(
+    "Verifying signature...",
+    verifier.verify(certPem, signatureBuffer)
+  );
 
   return verifier.verify(certPem, signatureBuffer);
 }
