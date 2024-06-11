@@ -126,6 +126,7 @@ export async function POST(req: NextRequest) {
         react: OrderReceivedEmail({
           orderId,
           orderDate: updatedOrder.createdAt.toLocaleDateString(),
+          // @ts-ignore
           shippingAddress: {
             name: purchaseUnits.shipping.name.full_name,
             city: shippingAddress.admin_area_2,
