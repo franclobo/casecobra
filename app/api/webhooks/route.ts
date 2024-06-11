@@ -29,7 +29,6 @@ async function verifyPayPalWebhookSignature(
   const crc = parseInt(crcHex, 16); // parse hex string to decimal// hex crc32 of raw event data, parsed to decimal form
 
   const message = `${transmissionId}|${timeStamp}|${WEBHOOK_ID}|${crc}`;
-  console.log(`Original signed message: ${message}`);
 
   const certPem = await downloadAndCache(headers["paypal-cert-url"]);
 
@@ -51,20 +50,11 @@ async function verifyPayPalWebhookSignature(
 export async function POST(req: NextRequest) {
   try {
     const body = await req.text();
-    console.log("Received body:", body);
 
     const transmissionId = headers().get("paypal-transmission-id");
     const transmissionTime = headers().get("paypal-transmission-time");
     const certUrl = headers().get("paypal-cert-url");
     const transmissionSig = headers().get("paypal-transmission-sig");
-
-    // Registro para depuración
-    console.log("Received headers:", {
-      transmissionId,
-      transmissionTime,
-      certUrl,
-      transmissionSig,
-    });
 
     const headersObj = {
       "paypal-transmission-id": transmissionId!,
@@ -86,9 +76,6 @@ export async function POST(req: NextRequest) {
 
     const webhookEvent = JSON.parse(body);
 
-    // Registro para depuración
-    console.log("Webhook event received:", webhookEvent);
-
     if (webhookEvent.event_type === "CHECKOUT.ORDER.APPROVED") {
       const payerEmail = webhookEvent.resource.payer.email_address;
       const purchaseUnits = webhookEvent.resource.purchase_units[0];
@@ -99,15 +86,11 @@ export async function POST(req: NextRequest) {
 
       const orderId = purchaseUnits.reference_id;
 
-      console.log("Order Id: ", orderId);
-
       if (!orderId) {
         throw new Error("Invalid request metadata");
       }
 
       const shippingAddress = purchaseUnits.shipping.address;
-
-      console.log("Shipping address: ", shippingAddress);
 
       const updatedOrder = await db.order.update({
         where: {
