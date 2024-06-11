@@ -8,8 +8,8 @@ import { Resend } from "resend";
 import OrderReceivedEmail from "@/components/emails/OrderReceivedEmail";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
-// Función para verificar la firma del webhook de PayPal
-// Función para descargar y cachear el certificado de PayPal
+// FunciÃ³n para verificar la firma del webhook de PayPal
+// FunciÃ³n para descargar y cachear el certificado de PayPal
 const WEBHOOK_ID = process.env.PAYPAL_WEBHOOK_ID!;
 
 async function downloadAndCache(certUrl: string): Promise<string> {
@@ -17,18 +17,18 @@ async function downloadAndCache(certUrl: string): Promise<string> {
   return response.data;
 }
 
-// Función para verificar la firma del webhook de PayPal
+// FunciÃ³n para verificar la firma del webhook de PayPal
 async function verifyPayPalWebhookSignature(
   event: string,
-  headers: { [key: string]: string },
+  headers: { [key: string]: string }
 ): Promise<boolean> {
-
   const transmissionId = headers["paypal-transmission-id"];
   const timeStamp = headers["paypal-transmission-time"];
   const crcHex = crc32.str(event).toString(16).padStart(8, "0"); // hex crc32 of raw event data, ensure it's 8 characters long
   const crc = parseInt(crcHex, 16); // parse hex string to decimal// hex crc32 of raw event data, parsed to decimal form
 
   const message = `${transmissionId}|${timeStamp}|${WEBHOOK_ID}|${crc}`;
+  console.log(`Original signed message: ${message}`);
 
   const certPem = await downloadAndCache(headers["paypal-cert-url"]);
 
@@ -50,11 +50,20 @@ async function verifyPayPalWebhookSignature(
 export async function POST(req: NextRequest) {
   try {
     const body = await req.text();
+    console.log("Received body:", body);
 
     const transmissionId = headers().get("paypal-transmission-id");
     const transmissionTime = headers().get("paypal-transmission-time");
     const certUrl = headers().get("paypal-cert-url");
     const transmissionSig = headers().get("paypal-transmission-sig");
+
+    // Registro para depuraciÃ³n
+    console.log("Received headers:", {
+      transmissionId,
+      transmissionTime,
+      certUrl,
+      transmissionSig,
+    });
 
     const headersObj = {
       "paypal-transmission-id": transmissionId!,
@@ -76,6 +85,9 @@ export async function POST(req: NextRequest) {
 
     const webhookEvent = JSON.parse(body);
 
+    // Registro para depuraciÃ³n
+    console.log("Webhook event received:", webhookEvent);
+
     if (webhookEvent.event_type === "CHECKOUT.ORDER.APPROVED") {
       const payerEmail = webhookEvent.resource.payer.email_address;
       const purchaseUnits = webhookEvent.resource.purchase_units[0];
@@ -86,11 +98,15 @@ export async function POST(req: NextRequest) {
 
       const orderId = purchaseUnits.reference_id;
 
+      console.log("Order Id: ", orderId);
+
       if (!orderId) {
         throw new Error("Invalid request metadata");
       }
 
       const shippingAddress = purchaseUnits.shipping.address;
+
+      console.log("Shipping address: ", shippingAddress);
 
       const updatedOrder = await db.order.update({
         where: {
@@ -114,7 +130,7 @@ export async function POST(req: NextRequest) {
       await resend.emails.send({
         from: "CaseCobra <fjbl2788@gmail.com>",
         to: payerEmail,
-        subject: "¡Gracias por tu compra!",
+        subject: "Â¡Gracias por tu compra!",
         react: OrderReceivedEmail({
           orderId,
           orderDate: updatedOrder.createdAt.toLocaleDateString(),
@@ -129,7 +145,6 @@ export async function POST(req: NextRequest) {
           },
         }),
       });
-
 
       return NextResponse.json({ result: updatedOrder, ok: true });
     }
