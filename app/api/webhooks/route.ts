@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import crypto from "crypto";
-import crc32 from "crc-32";
+import crc32 from "buffer-crc32";
 import { Resend } from "resend";
 import OrderReceivedEmail from "@/components/emails/OrderReceivedEmail";
 
@@ -25,8 +25,7 @@ async function verifyPayPalWebhookSignature(
 
   const transmissionId = headers["paypal-transmission-id"];
   const timeStamp = headers["paypal-transmission-time"];
-  const crcHex = crc32.str(event).toString(16).padStart(8, "0"); // hex crc32 of raw event data, ensure it's 8 characters long
-  const crc = parseInt(crcHex, 16); // parse hex string to decimal// hex crc32 of raw event data, parsed to decimal form
+  const crc = parseInt("0x" + crc32(event).toString("hex"));
 
   const message = `${transmissionId}|${timeStamp}|${WEBHOOK_ID}|${crc}`;
 

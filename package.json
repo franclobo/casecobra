@@ -28,6 +28,7 @@
     "@tanstack/react-query": "^5.37.1",
     "@uploadthing/react": "^6.5.4",
     "axios": "^1.7.2",
+    "buffer-crc32": "^1.0.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "crc-32": "^1.2.2",
