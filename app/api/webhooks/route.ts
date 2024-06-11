@@ -23,17 +23,20 @@ async function verifyPayPalWebhookSignature(
   const timeStamp = headers["paypal-transmission-time"];
   const crcHex = crc32.str(event).toString(16).padStart(8, "0");
   const crc = parseInt(crcHex, 16);
+
   const message = `${transmissionId}|${timeStamp}|${WEBHOOK_ID}|${crc}`;
+  console.log(`Original signed message: ${message}`);
 
   const certPem = await downloadAndCache(headers["paypal-cert-url"]);
+
   const signatureBuffer = Buffer.from(
     headers["paypal-transmission-sig"],
     "base64"
   );
 
   const verifier = crypto.createVerify("SHA256");
+
   verifier.update(message);
-  verifier.end();
 
   return verifier.verify(certPem, signatureBuffer);
 }
@@ -55,17 +58,14 @@ export async function POST(req: NextRequest) {
       transmissionSig,
     });
 
-    if (!transmissionId || !transmissionTime || !certUrl || !transmissionSig) {
-      throw new Error("Missing required headers");
-    }
-
     const headersObj = {
-      "paypal-transmission-id": transmissionId,
-      "paypal-transmission-time": transmissionTime,
-      "paypal-cert-url": certUrl,
-      "paypal-transmission-sig": transmissionSig,
+      "paypal-transmission-id": transmissionId!,
+      "paypal-transmission-time": transmissionTime!,
+      "paypal-cert-url": certUrl!,
+      "paypal-transmission-sig": transmissionSig!,
     };
 
+    // Verificar la firma del webhook de PayPal
     const signatureVerified = await verifyPayPalWebhookSignature(
       body,
       headersObj
@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
 
       const orderId = purchaseUnits.reference_id;
 
-      console.log("Order Id:", orderId);
+      console.log("Order Id: ", orderId);
 
       if (!orderId) {
         throw new Error("Invalid request metadata");
@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
 
       const shippingAddress = purchaseUnits.shipping.address;
 
-      console.log("Shipping address:", shippingAddress);
+      console.log("Shipping address: ", shippingAddress);
 
       const updatedOrder = await db.order.update({
         where: {
@@ -122,7 +122,7 @@ export async function POST(req: NextRequest) {
       await resend.emails.send({
         from: "CaseCobra <fjbl2788@gmail.com>",
         to: payerEmail,
-        subject: "¡Gracias por tu compra!",
+        subject: "Â¡Gracias por tu compra!",
         react: OrderReceivedEmail({
           orderId,
           orderDate: updatedOrder.createdAt.toLocaleDateString(),
@@ -144,6 +144,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ result: webhookEvent, ok: true });
   } catch (err) {
     console.error(err);
+
     return NextResponse.json(
       { message: "Something went wrong", ok: false },
       { status: 500 }
