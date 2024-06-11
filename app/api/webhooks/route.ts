@@ -51,6 +51,7 @@ async function verifyPayPalWebhookSignature(
 export async function POST(req: NextRequest) {
   try {
     const body = await req.text();
+    console.log("Received body:", body);
 
     const transmissionId = headers().get("paypal-transmission-id");
     const transmissionTime = headers().get("paypal-transmission-time");
