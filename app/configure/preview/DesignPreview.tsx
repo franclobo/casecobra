@@ -41,26 +41,30 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
     totalPrice += PRODUCT_PRICES.material.policarbonato;
 
   const paypalCreateOrder = async () => {
-    try {
-      const response = await axios.post("/api/paypal/createorder", {
-        configId: configuration,
-      });
+    if (user) {
+      try {
+        const response = await axios.post("/api/paypal/createorder", {
+          configId: configuration,
+        });
 
-      if (response.status !== 200) {
-        throw new Error(
-          response.data.error || "Error al crear la orden en PayPal"
-        );
+        if (response.status !== 200) {
+          throw new Error(
+            response.data.error || "Error al crear la orden en PayPal"
+          );
+        }
+        return response.data.orderId;
+      } catch (err) {
+        console.error("Error al crear la orden:", err);
+        toast({
+          title: "Error",
+          description: "Hubo un error al crear la orden.",
+          variant: "destructive",
+        });
+        return null;
       }
-      return response.data.orderId;
-    } catch (err) {
-      console.error("Error al crear la orden:", err);
-      toast({
-        title: "Error",
-        description: "Hubo un error al crear la orden.",
-        variant: "destructive",
-      });
-      if(!user){setIsLoginModalOpen(true);}
-      return null;
+    } else {
+      localStorage.setItem("configurationId", configuration.id);
+      setIsLoginModalOpen(true);
     }
   };
 
@@ -82,7 +86,6 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
       });
     }
   };
-
 
   const paypalCaptureOrder = async (orderId: string) => {
     try {
@@ -154,16 +157,16 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
               <p className="font-medium text-zinc-950">Detalles</p>
               <ol className="mt-3 text-zinc-700 list-disc list-inside">
                 <li>Compatible con carga wireless</li>
-                <li>Poliuretano termoplástico que absorbe los golpes</li>
+                <li>Poliuretano termoplÃ¡stico que absorbe los golpes</li>
                 <li>Embalaje hecho con materiales reciclados</li>
-                <li>ImpresiÃ³n con 5 años de garantía</li>
+                <li>ImpresiÃÂ³n con 5 aÃ±os de garantÃ­a</li>
               </ol>
             </div>
             <div>
               <p className="font-medium text-zinc-950">Materiales</p>
               <ol className="mt-3 text-zinc-700 list-disc list-inside">
                 <li>Material duradero de alta calidad</li>
-                <li>Protección contra golpes y arañazos</li>
+                <li>ProtecciÃ³n contra golpes y araÃ±azos</li>
               </ol>
             </div>
           </div>
