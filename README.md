@@ -34,8 +34,15 @@
 # 📖 CaseCobra<a name="about-project"></a>
 
 
-**CaseCobra** genera tu podcast usando IA.
+**CaseCobra** genera una vista previa de la carcasa para tu celular.
 
+![image](https://github.com/user-attachments/assets/3fbc2396-3ffc-4922-8952-7e2e42d9478a)
+
+![image](https://github.com/user-attachments/assets/3e0601b4-ef1c-415c-9051-fa5f105892ff)
+
+![image](https://github.com/user-attachments/assets/e47b47c0-1e75-49e4-9fc9-a3af0abc0d40)
+
+![image](https://github.com/user-attachments/assets/f8223b04-886b-40c2-8537-c28648bcf1d5)
 
 ## 🛠 Built With <a name="built-with"></a>
 
