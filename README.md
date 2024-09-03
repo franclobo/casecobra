@@ -1,36 +1,231 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<a name="readme-top"></a>
 
-## Getting Started
+<div align="center">
+  <br/>
 
-First, run the development server:
+  <h3><b>CaseCobra</b></h3>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+</div>
+
+<!-- TABLE OF CONTENTS -->
+
+# 📗 Table of Contents
+
+- [📖 About the Project](#about-project)
+  - [🛠 Built With](#built-with)
+    - [Tech Stack](#tech-stack)
+    - [Key Features](#key-features)
+  - [🚀 Live Demo](#live-demo)
+- [💻 Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Setup](#setup)
+  - [Install](#install)
+  - [Usage](#usage)
+  - [Run tests](#run-tests)
+  - [Deployment](#deployment)
+- [👥 Authors](#authors)
+- [🤝 Contributing](#contributing)
+- [⭐️ Show your support](#support)
+- [🙏 Acknowledgements](#acknowledgements)
+- [📝 License](#license)
+
+<!-- PROJECT DESCRIPTION -->
+
+# 📖 CaseCobra<a name="about-project"></a>
+
+
+**CaseCobra** genera tu podcast usando IA.
+
+
+## 🛠 Built With <a name="built-with"></a>
+
+### Tech Stack <a name="tech-stack"></a>
+
+<details>
+  <summary>Client</summary>
+  <ul>
+    <li><a href="https://nextjs.org/">Next.js</a></li>
+  </ul>
+</details>
+
+<details>
+  <summary>Server</summary>
+  <ul>
+    <li><a href="https://www.prisma.io/">Prisma</a></li>
+  </ul>
+</details>
+
+<details>
+<summary>Database</summary>
+  <ul>
+    <li><a href="https://kinde.com/authentication/">Kinde</a></li>
+    <li><a href="https://uploadthing.com/">Uploadthing</a></li>
+    <li><a href="https://console.neon.tech/app/projects">Neon</a></li>
+    <li><a href="https://resend.com/">ReSend</a></li>
+    <li><a href="https://www.paypal.com/">PayPal</a></li>
+  </ul>
+</details>
+
+<!-- Features -->
+
+### Key Features <a name="key-features"></a>
+
+- **Machine learning**
+- **Process Automation**
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- LIVE DEMO -->
+
+## 🚀 Live Demo <a name="live-demo"></a>
+
+
+- [CaseCobra](https://casecobra-nine-iota.vercel.app/)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- GETTING STARTED -->
+
+## 💻 Getting Started <a name="getting-started"></a>
+
+To get a local copy up and running, follow these steps.
+
+### Prerequisites
+
+In order to run this project you need:
+
+### Setup
+
+Clone this repository to your desired folder:
+
+```sh
+  cd my-folder
+  git clone git@github.com:franclobo/casecobra.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Install
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Install this project with:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```sh
+  cd CaseCobra
+  npm install
+```
 
-## Learn More
+### Usage
 
-To learn more about Next.js, take a look at the following resources:
+To run the project, execute the following command:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+```sh
+  npm run dev
+```
 
-## Deploy on Vercel
+### Enviroment Variables
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Create an account in [Kinde](https://kinde.com/authentication/) and [Uploadthing](https://uploadthing.com/) and get the following variables:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```sh
+  KINDE_CLIENT_ID=YOUR_KINDE_CLIENT_ID
+  KINDE_CLIENT_SECRET=YOUR_KINDE_CLIENT_SECRET
+  KINDE_ISSUER_URL=YOUR_KINDE_ISSUER_URL
+  KINDE_SITE_URL=YOUR_KINDE_SITE_URL
+  KINDE_POST_LOGOUT_REDIRECT_URL=YOUR_KINDE_POST_LOGOUT_REDIRECT_URL
+  KINDE_POST_LOGIN_REDIRECT_URL=YOUR_KINDE_POST_LOGIN_REDIRECT_URL
+  ADMIN_EMAIL=YOUR_ADMIN_EMAIL
+  UPLOADTHING_SECRET=YOUR_UPLOADTHING_SECRET
+  UPLOADTHING_APP_ID=YOUR_UPLOADTHING_APP_ID
+```
+Create an account in [Neon](https://console.neon.tech/app/projects) and get the following variables:
+
+```sh
+  DATABASE_URL=YOUR_DATABASE_URL
+  PGHOST=YOUR_PGHOST
+  PGDATABASE=YOUR_PGDATABASE
+  PGUSER=YOUR_PGUSER
+  PGPASSWORD=YOUR_PGPASSWORD
+```
+  NE
+Create an account in [ReSend](https://resend.com/) and get the following variables:
+
+```sh
+  RESEND_API_KEY=YOUR_RESEND
+```
+
+Create an account in [PayPal](https://www.paypal.com/) and get the following variables:
+
+```sh
+  PAYPAL_CLIENT_ID=YOUR_PAYPAL_CLIENT_ID
+  PAYPAL_SECRET_KEY=YOUR_PAYPAL_SECRET_KEY
+  NEXT_PUBLIC_PAYPAL_CLIENT_ID=YOUR_NEXT_PUBLIC_PAYPAL_CLIENT_ID
+  PAYPAL_WEBHOOK_ID=YOUR_PAYPAL_WEBHOOK_ID
+  NEXT_PUBLIC_VERCEL_URL=YOUR_NEXT_PUBLIC_VERCEL_URL
+  PAYPAL_ACCESS_TOKEN=YOUR_PAYPAL_ACCESS_TOKEN
+```
+
+Create a `.env` file in the root of the project and add the variables.
+
+
+### Deployment
+
+You can deploy this project using:
+
+- [Vercel](https://vercel.com/)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- AUTHORS -->
+
+## 👥 Authors <a name="authors"></a>
+
+
+
+## 👤 Francisco Borja
+
+- GitHub: [@franclobo](https://github.com/franclobo)
+
+- Twitter: [@pancho2788](https://twitter.com/Pancho2788)
+
+- LinkedIn: [Francisco Borja](https://www.linkedin.com/in/francisco-borja-lobato/)
+
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+<!-- CONTRIBUTING -->
+
+## 🤝 Contributing <a name="contributing"></a>
+
+Contributions, issues, and feature requests are welcome!
+
+Feel free to check the [issues page](../../issues/).
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- SUPPORT -->
+
+## ⭐️ Show your support <a name="support"></a>
+
+> Write a message to encourage readers to support your project
+
+If you like this project give it a ⭐️!
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- ACKNOWLEDGEMENTS -->
+
+## 🙏 Acknowledgments <a name="acknowledgements"></a>
+
+> Give credit to everyone who inspired your codebase.
+
+I would like to thank [Josh Tried Coding](https://www.youtube.com/watch?v=SG82Aqcaaa0&t=2151s) for the inspiration for this project.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- LICENSE -->
+
+## 📝 License <a name="license"></a>
+
+This project is [MIT](./LICENSE) licensed.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
